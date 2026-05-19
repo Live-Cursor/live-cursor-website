@@ -748,7 +748,232 @@ footer {
   width: 100%;
 }
 
+/* How It Works Section */
+.how-it-works-section {
+  padding: 100px 6%;
+  background: var(--bg-dark);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hiw-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.hiw-grid {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.hiw-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hiw-tab {
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.hiw-tab h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.hiw-tab p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.hiw-tab:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.hiw-tab.active {
+  background: var(--bg-card);
+  border-color: var(--border-subtle);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.hiw-visualization-container {
+  flex: 1.2;
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.hiw-vis-panel {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.hiw-vis-panel.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vis-caption {
+  position: absolute;
+  bottom: 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 80%;
+}
+
+/* Visualization 1: CRDT Merge */
+.vis-crdt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+.crdt-line {
+  background: var(--bg-dark);
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+.crdt-insertion.sarah {
+  color: var(--accent-cyan);
+}
+.crdt-insertion.alex {
+  color: var(--accent-indigo);
+}
+.crdt-merge-arrow {
+  color: var(--text-muted);
+  font-size: 24px;
+}
+.crdt-line.result {
+  border-color: var(--accent-indigo);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
+}
+
+/* Visualization 2: Presence */
+.vis-presence {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  background: var(--bg-dark);
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  width: 100%;
+}
+.presence-line.mt-2 {
+  margin-top: 12px;
+}
+.presence-highlight {
+  background: rgba(99, 102, 241, 0.3);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+.presence-cursor {
+  position: absolute;
+  bottom: 10px;
+  right: 120px;
+  animation: float-cursor 3s infinite ease-in-out;
+}
+.presence-caret {
+  width: 2px;
+  height: 16px;
+  background: var(--accent-indigo);
+}
+.presence-tag {
+  background: var(--accent-indigo);
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  position: absolute;
+  top: -18px;
+  left: 4px;
+}
+
+/* Visualization 3: Vault Sync */
+.vis-vault {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.vault-tree {
+  background: var(--bg-dark);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+.tree-item.active {
+  color: var(--accent-cyan);
+}
+.vault-sync-ring {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+.ring-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--accent-cyan);
+  animation: ring-expand 2s infinite ease-out;
+}
+.ring-pulse.delayed {
+  animation-delay: 1s;
+}
+
 /* Keyframes animations */
+@keyframes type-in {
+  0%, 20% { opacity: 0; transform: translateY(-5px); }
+  40%, 100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes type-in-delayed {
+  0%, 40% { opacity: 0; transform: translateY(-5px); }
+  60%, 100% { opacity: 1; transform: translateY(0); }
+}
 @keyframes sidebar-glow {
   from { background-color: rgba(99, 102, 241, 0.03); }
   to { background-color: rgba(99, 102, 241, 0.18); box-shadow: 0 0 10px rgba(99, 102, 241, 0.1); }

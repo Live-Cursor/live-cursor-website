@@ -123,6 +123,88 @@
     </div>
   </section>
 
+  <!-- How it Works - Interactive Visualization Tabs -->
+  <section class="how-it-works-section" id="how-it-works">
+    <div class="hiw-container">
+      <div class="hiw-header">
+        <h2 class="section-title">Core features</h2>
+        <p class="section-subtitle">Everything you need for seamless collaboration in Obsidian.</p>
+      </div>
+      
+      <div class="hiw-grid">
+        <!-- Left Side: Tabs -->
+        <div class="hiw-tabs">
+          <div class="hiw-tab active" onclick="switchVisualTab(1)">
+            <h3>Conflict-Free Merging</h3>
+            <p>Changes are tracked at the keystroke level using Yjs CRDTs. See how fast updates flow without conflicts.</p>
+          </div>
+          <div class="hiw-tab" onclick="switchVisualTab(2)">
+            <h3>Real-Time Presence</h3>
+            <p>See exactly who is editing what with native cursor and selection sharing integrated into the editor.</p>
+          </div>
+          <div class="hiw-tab" onclick="switchVisualTab(3)">
+            <h3>Vault-Wide Sync</h3>
+            <p>Beyond text, sync your active panes, layouts, and workspace themes automatically.</p>
+          </div>
+        </div>
+
+        <!-- Right Side: Visualization Container -->
+        <div class="hiw-visualization-container">
+          <!-- Vis 1: CRDT Merge -->
+          <div class="hiw-vis-panel active" id="hiw-vis-1">
+            <div class="vis-crdt">
+              <div class="crdt-line">
+                <span class="crdt-text">Obsidian collaboration</span>
+                <span class="crdt-insertion sarah">usually requires servers.</span>
+                <span class="crdt-insertion alex">is easy now.</span>
+              </div>
+              <div class="crdt-merge-arrow">↓</div>
+              <div class="crdt-line result">
+                <span class="crdt-text">Obsidian collaboration</span>
+                <span class="crdt-text">usually requires servers.</span>
+                <span class="crdt-text">is easy now.</span>
+              </div>
+            </div>
+            <p class="vis-caption">Concurrent keystrokes are merged deterministically using Lamport timestamps.</p>
+          </div>
+
+          <!-- Vis 2: Presence -->
+          <div class="hiw-vis-panel" id="hiw-vis-2">
+            <div class="vis-presence">
+              <div class="presence-line">
+                <span class="md-h1"># Live Cursor</span>
+              </div>
+              <div class="presence-line mt-2">
+                Seamless real-time <span class="presence-highlight">collaboration</span>
+                <div class="presence-cursor">
+                  <div class="presence-caret"></div>
+                  <div class="presence-tag">Sarah</div>
+                </div>
+              </div>
+            </div>
+            <p class="vis-caption">Highlighting text locks the range visually for all peers instantly.</p>
+          </div>
+
+          <!-- Vis 3: Vault Sync -->
+          <div class="hiw-vis-panel" id="hiw-vis-3">
+             <div class="vis-vault">
+                <div class="vault-tree">
+                   <div class="tree-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> manifesto.md</div>
+                   <div class="tree-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> brainstorming.md</div>
+                   <div class="tree-item active pulse-sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> settings.json</div>
+                </div>
+                <div class="vault-sync-ring">
+                  <div class="ring-pulse"></div>
+                  <div class="ring-pulse delayed"></div>
+                </div>
+             </div>
+             <p class="vis-caption">Synchronize specific folders or the entire vault configuration securely.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Technical Features Grid -->
   <section class="features-section" id="features">
     <h2 class="section-title">Engine Architecture</h2>
@@ -395,6 +477,19 @@
 
       // Start the simulation loop
       setTimeout(runSimulationStep, 800);
+      
+      // Interactive tabs for "How it Works" section
+      window.switchVisualTab = function(index) {
+        document.querySelectorAll('.hiw-tab').forEach((tab, i) => {
+          if (i + 1 === index) tab.classList.add('active');
+          else tab.classList.remove('active');
+        });
+
+        document.querySelectorAll('.hiw-vis-panel').forEach((panel, i) => {
+          if (i + 1 === index) panel.classList.add('active');
+          else panel.classList.remove('active');
+        });
+      };
     });
   </script>
 </body>
