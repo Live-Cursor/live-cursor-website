@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Cursor | Self-Hosted Real-Time Collaboration for Obsidian</title>
-  <meta name="description" content="A self-hosted, zero-configuration real-time collaborative editing and configuration sync engine for private Obsidian vaults.">
+  <meta name="description" content="A self-hosted, zero-configuration real-time collaborative editing and configuration sync plugin for private Obsidian vaults.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -39,18 +39,30 @@
     </div>
 
     <!-- Pixel-Perfect Obsidian Mockup Container -->
-    <div class="mockup-container">
+    <div class="mockup-container" id="mockup-obsidian">
       <div class="mockup-header">
         <div class="window-controls">
           <div class="win-dot red"></div>
           <div class="win-dot yellow"></div>
           <div class="win-dot green"></div>
         </div>
-        <div class="mockup-title">
-          <div class="active-pulse"></div>
-          <span>vault://brainstorming.md</span>
+        
+        <!-- Multi-Tab Obsidian Topbar -->
+        <div class="mockup-tabs">
+          <div class="mockup-tab active" id="tab-brainstorming">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>brainstorming.md</span>
+          </div>
+          <div class="mockup-tab" id="tab-tasks">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>sprint-tasks.md</span>
+          </div>
         </div>
-        <div style="width: 32px;"></div> <!-- Spacer -->
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="active-pulse"></div>
+          <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);">Syncing</span>
+        </div>
       </div>
       
       <div class="mockup-layout">
@@ -58,19 +70,15 @@
         <div class="mockup-sidebar">
           <span class="sidebar-title">Vault Files</span>
           <ul class="file-tree">
-            <li class="file-item active">
+            <li class="file-item active" id="sidebar-brainstorming">
               <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
               <span>brainstorming.md</span>
             </li>
-            <li class="file-item">
+            <li class="file-item" id="sidebar-tasks">
               <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
               <span>sprint-tasks.md</span>
             </li>
-            <li class="file-item">
-              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-              <span>peer-keys.json</span>
-            </li>
-            <li class="file-item">
+            <li class="file-item" id="sidebar-settings">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               <span>settings.json</span>
             </li>
@@ -79,6 +87,12 @@
 
         <!-- Editor canvas -->
         <div class="mockup-editor" id="editor-body">
+          <!-- Dynamic System Notification Banner -->
+          <div class="sync-banner" id="banner-notification">
+            <div class="banner-pulse"></div>
+            <span id="banner-text">Sync event: Workspace updated</span>
+          </div>
+
           <div class="editor-content" id="editor-content-pane"></div>
 
           <!-- Dynamic Multi-Carets Elements -->
@@ -197,36 +211,51 @@
       const cursorSarah = document.getElementById('cursor-sarah');
       const cursorAlex = document.getElementById('cursor-alex');
       const logsContainer = document.getElementById('logs-container');
+      const notificationBanner = document.getElementById('banner-notification');
+      const bannerText = document.getElementById('banner-text');
+      const mockupContainer = document.getElementById('mockup-obsidian');
 
-      // System setup variables
-      const baseLines = [
-        '<span class="md-h1"># Design Strategy</span>',
-        '<span class="md-bullet">- [x]</span> Configure zero-dependency server node',
-        '<span class="md-bullet">- [/]</span> Integrate Yjs CRDT merge buffers',
-        '<span class="md-bullet">- [ ]</span> Deploy production client build'
+      // Sidebar & tab targets
+      const sidebarBrainstorming = document.getElementById('sidebar-brainstorming');
+      const sidebarTasks = document.getElementById('sidebar-tasks');
+      const sidebarSettings = document.getElementById('sidebar-settings');
+      const tabBrainstorming = document.getElementById('tab-brainstorming');
+      const tabTasks = document.getElementById('tab-tasks');
+
+      // Content states for document switches
+      let brainstormingContent = [
+        '<span class="md-h1"># Product Brainstorming</span>',
+        '<span class="md-bullet">- [x]</span> Design core SQLite schema bindings',
+        '<span class="md-bullet">- [/]</span> Integrate Yjs conflict resolution',
+        '<span class="md-bullet">- [ ]</span> Build local client socket'
       ];
 
-      // Render base state
+      const tasksContent = [
+        '<span class="md-h1"># Vault Sprint Tasks</span>',
+        '<span class="md-bullet">- [x]</span> Setup multi-tab window navigation rules',
+        '<span class="md-bullet">- [ ]</span> Validate setting config synchronization'
+      ];
+
+      let activeContent = [...brainstormingContent];
+
+      // Render content
       function renderState(lines) {
         editorPane.innerHTML = lines.join('\n');
       }
       
-      renderState(baseLines);
+      renderState(activeContent);
 
-      // Fetch editor box positioning for relative carets
+      // Caret helper position values
       function getPositionOfLine(lineNumber, charOffset) {
-        const rect = editorPane.getBoundingClientRect();
-        // Since font is monospace, we can approximate position easily relative to bounds
-        const charWidth = 7.8; 
+        const charWidth = 7.7; 
         const lineHeight = 22.1; 
-        
         return {
           left: (charOffset * charWidth) + 28,
           top: (lineNumber * lineHeight) + 24
         };
       }
 
-      // Add a clean telemetry log line dynamically
+      // Sync log outputs
       function addLog(module, text, isSync = false) {
         const time = new Date().toTimeString().split(' ')[0];
         const logLine = document.createElement('div');
@@ -236,128 +265,185 @@
         logsContainer.scrollTop = logsContainer.scrollHeight;
       }
 
-      // Sequence timeline variables
-      // 0: Sarah connects
-      // 1: Sarah moves cursor to line 2 (Integrate Yjs...)
-      // 2: Sarah highlights [/]
-      // 3: Sarah types [x]
-      // 4: Sarah moves cursor down and deselects
-      // 5: Alex connects
-      // 6: Alex moves cursor to end of line 3
-      // 7: Alex presses Enter and types: - [ ] Verify client token validation
-      // 8: Idle for 4 seconds, then repeat sequence
+      // Banner slip-down alert helper
+      function showBanner(text) {
+        bannerText.textContent = text;
+        notificationBanner.classList.add('active');
+        setTimeout(() => {
+          notificationBanner.classList.remove('active');
+        }, 3500);
+      }
+
       let step = 0;
 
-      function runAnimationStep() {
+      function runSimulationStep() {
         if (step === 0) {
+          // --- PHASE 1: REAL-TIME CONCURRENT KEYSTROKE MERGING ---
           // Sarah connects
           cursorSarah.style.display = 'inline-flex';
-          const pos = getPositionOfLine(0, 16);
+          const pos = getPositionOfLine(0, 22);
           cursorSarah.style.left = pos.left + 'px';
           cursorSarah.style.top = pos.top + 'px';
-          addLog('PEER', 'Sarah connected from 192.168.1.45');
+          addLog('PEER', 'Sarah joined active workspace');
+          
           step++;
-          setTimeout(runAnimationStep, 1500);
+          setTimeout(runSimulationStep, 1500);
         }
         else if (step === 1) {
-          // Sarah moves to line 2, character 10
-          const pos = getPositionOfLine(2, 10);
+          // Sarah moves to line 2 (Integrate Yjs...) and highlights the slash
+          const pos = getPositionOfLine(2, 9);
           cursorSarah.style.left = pos.left + 'px';
           cursorSarah.style.top = pos.top + 'px';
+          
+          setTimeout(() => {
+            activeContent[2] = '<span class="md-bullet">- [<span class="select-span cyan">/</span>]</span> Integrate Yjs conflict resolution';
+            renderState(activeContent);
+            addLog('SYNC', 'Sarah locked character 2:9', true);
+          }, 400);
+
           step++;
-          setTimeout(runAnimationStep, 1000);
+          setTimeout(runSimulationStep, 1600);
         }
         else if (step === 2) {
-          // Sarah highlights [/]
-          baseLines[2] = '<span class="md-bullet">- [<span class="select-span cyan">/</span>]</span> Integrate Yjs CRDT merge buffers';
-          renderState(baseLines);
-          addLog('SYNC', 'Sarah locked range 2:10 - 2:11', true);
-          step++;
-          setTimeout(runAnimationStep, 1200);
-        }
-        else if (step === 3) {
-          // Sarah replaces / with x
-          baseLines[2] = '<span class="md-bullet">- [x]</span> Integrate Yjs CRDT merge buffers';
-          renderState(baseLines);
+          // Sarah completes change: types 'x' in place of '/'
+          activeContent[2] = '<span class="md-bullet">- [x]</span> Integrate Yjs conflict resolution';
+          renderState(activeContent);
           const pos = getPositionOfLine(2, 12);
           cursorSarah.style.left = pos.left + 'px';
-          addLog('SYNC', 'Sarah updated list item status (done)', true);
+          addLog('SYNC', 'Sarah resolved list items index', true);
+          
           step++;
-          setTimeout(runAnimationStep, 1500);
+          setTimeout(runSimulationStep, 1500);
+        }
+        else if (step === 3) {
+          // Alex connects and starts typing on line 3 concurrently
+          cursorAlex.style.display = 'inline-flex';
+          const pos = getPositionOfLine(3, 31);
+          cursorAlex.style.left = pos.left + 'px';
+          cursorAlex.style.top = pos.top + 'px';
+          addLog('PEER', 'Alex joined active workspace');
+          
+          step++;
+          setTimeout(runSimulationStep, 1200);
         }
         else if (step === 4) {
-          // Sarah moves cursor to end of line 2, deselecting
-          const pos = getPositionOfLine(2, 40);
-          cursorSarah.style.left = pos.left + 'px';
+          // Alex highlights "client socket"
+          activeContent[3] = '<span class="md-bullet">- [ ]</span> Build local <span class="select-span">client socket</span>';
+          renderState(activeContent);
+          addLog('SYNC', 'Alex locked text range 3:18 - 3:31', true);
+          
           step++;
-          setTimeout(runAnimationStep, 1000);
+          setTimeout(runSimulationStep, 1400);
         }
         else if (step === 5) {
-          // Alex connects
-          cursorAlex.style.display = 'inline-flex';
-          const pos = getPositionOfLine(1, 0);
+          // Alex types replacement: "peer replication engine"
+          activeContent[3] = '<span class="md-bullet">- [ ]</span> Build local peer replication engine';
+          renderState(activeContent);
+          const pos = getPositionOfLine(3, 44);
           cursorAlex.style.left = pos.left + 'px';
-          cursorAlex.style.top = pos.top + 'px';
-          addLog('PEER', 'Alex connected from 192.168.1.92');
+          addLog('SYNC', 'Alex updated range buffer (CRDT merge ok)', true);
+          
+          // Sarah moves to the side, then starts tab sync
+          const posS = getPositionOfLine(1, 40);
+          cursorSarah.style.left = posS.left + 'px';
+          cursorSarah.style.top = posS.top + 'px';
+
           step++;
-          setTimeout(runAnimationStep, 1500);
+          setTimeout(runSimulationStep, 2000);
         }
         else if (step === 6) {
-          // Alex moves to the end of the last line
-          const pos = getPositionOfLine(3, 35);
-          cursorAlex.style.left = pos.left + 'px';
-          cursorAlex.style.top = pos.top + 'px';
+          // --- PHASE 2: WORKSPACE TAB & LAYOUT SYNCHRONIZATION ---
+          // Sarah triggers tab switch (opens sprint-tasks.md)
+          sidebarTasks.classList.add('flash-glow');
+          addLog('SYNC', 'Sarah requested navigation: sprint-tasks.md', true);
+          
           step++;
-          setTimeout(runAnimationStep, 1200);
+          setTimeout(runSimulationStep, 1500);
         }
         else if (step === 7) {
-          // Alex hits Enter and starts typing a new task line-by-line
-          baseLines.push('<span class="md-bullet">- [ ]</span> ');
-          renderState(baseLines);
-          const pos = getPositionOfLine(4, 8);
+          // Switch tabs in visual mockup
+          sidebarTasks.classList.remove('flash-glow');
+          sidebarBrainstorming.classList.remove('active');
+          sidebarTasks.classList.add('active');
+          tabBrainstorming.classList.remove('active');
+          tabTasks.classList.add('active');
+          
+          // Switch editor content
+          activeContent = [...tasksContent];
+          renderState(activeContent);
+          showBanner('Sync event: Opened sprint-tasks.md (Layout synced)');
+          
+          // Update both cursor positions
+          cursorSarah.style.top = getPositionOfLine(0, 16).top + 'px';
+          cursorSarah.style.left = getPositionOfLine(0, 16).left + 'px';
+          
+          cursorAlex.style.top = getPositionOfLine(1, 44).top + 'px';
+          cursorAlex.style.left = getPositionOfLine(1, 44).left + 'px';
+          
+          addLog('SYNC', 'Workspace layout aligned across 2 peers', true);
+          
+          step++;
+          setTimeout(runSimulationStep, 2200);
+        }
+        else if (step === 8) {
+          // --- PHASE 3: VAULT SETTINGS & THEME SYNCHRONIZATION ---
+          // Bob changes settings in the background (mock setting file glow)
+          sidebarSettings.classList.add('flash-glow');
+          addLog('SYNC', 'External peer modified appearance settings (settings.json)', true);
+          
+          step++;
+          setTimeout(runSimulationStep, 1500);
+        }
+        else if (step === 9) {
+          // Trigger settings sync event and slide-down banner
+          sidebarSettings.classList.remove('flash-glow');
+          showBanner('Setting Sync: Theme changed to Nord Dark');
+          
+          // Smoothly shift mockup theme using classes
+          mockupContainer.classList.add('nord-theme');
+          addLog('INIT', 'Applied vault-wide stylesheet merge', true);
+          
+          step++;
+          setTimeout(runSimulationStep, 2500);
+        }
+        else if (step === 10) {
+          // Alex types verification of theme sync in new tab
+          const pos = getPositionOfLine(1, 48);
           cursorAlex.style.left = pos.left + 'px';
           cursorAlex.style.top = pos.top + 'px';
           
-          addLog('SYNC', 'Alex created new list node', true);
+          activeContent[1] = '<span class="md-bullet">- [x]</span> Validate setting config synchronization';
+          renderState(activeContent);
+          addLog('SYNC', 'Alex updated checklist: settings validated', true);
           
-          // Type characters with small timeouts
-          const textToType = 'Verify client token validation';
-          let typed = '';
-          let i = 0;
-          
-          function typeChar() {
-            if (i < textToType.length) {
-              typed += textToType[i];
-              baseLines[4] = `<span class="md-bullet">- [ ]</span> ${typed}`;
-              renderState(baseLines);
-              const nextPos = getPositionOfLine(4, 8 + i + 1);
-              cursorAlex.style.left = nextPos.left + 'px';
-              i++;
-              setTimeout(typeChar, 80);
-            } else {
-              addLog('SYNC', 'Alex completed note edit', true);
-              step++;
-              setTimeout(runAnimationStep, 4000);
-            }
-          }
-          setTimeout(typeChar, 200);
+          step++;
+          setTimeout(runSimulationStep, 4500);
         }
         else {
-          // Reset simulation back to base state
-          baseLines[2] = '<span class="md-bullet">- [/]</span> Integrate Yjs CRDT merge buffers';
-          if (baseLines.length > 4) baseLines.pop();
-          renderState(baseLines);
+          // --- LOOP RESET ---
+          // Revert back to original state
+          mockupContainer.classList.remove('nord-theme');
+          sidebarTasks.classList.remove('active');
+          sidebarBrainstorming.classList.add('active');
+          tabTasks.classList.remove('active');
+          tabBrainstorming.classList.add('active');
+          
+          brainstormingContent[2] = '<span class="md-bullet">- [/]</span> Integrate Yjs conflict resolution';
+          brainstormingContent[3] = '<span class="md-bullet">- [ ]</span> Build local client socket';
+          activeContent = [...brainstormingContent];
+          renderState(activeContent);
           
           cursorSarah.style.display = 'none';
           cursorAlex.style.display = 'none';
-          addLog('INIT', 'Simulation sequence cycled');
+          
+          addLog('INIT', 'Collaboration simulation sequence reset');
           step = 0;
-          setTimeout(runAnimationStep, 2000);
+          setTimeout(runSimulationStep, 2500);
         }
       }
 
       // Start the simulation loop
-      setTimeout(runAnimationStep, 1000);
+      setTimeout(runSimulationStep, 800);
     });
   </script>
 </body>

@@ -232,7 +232,8 @@ h1 {
 
 .mockup-header {
   background: #09090b;
-  padding: 10px 16px;
+  padding: 0 16px;
+  height: 40px;
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-between;
@@ -254,17 +255,44 @@ h1 {
 .win-dot.yellow { background: #ffbd2e; }
 .win-dot.green { background: #27c93f; }
 
-.mockup-title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-secondary);
-  background: var(--panel-accent);
-  padding: 3px 12px;
-  border-radius: 4px;
-  border: 1px solid var(--border-subtle);
+/* Obsidian Multi-Tab UI */
+.mockup-tabs {
+  display: flex;
+  height: 100%;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.mockup-tab {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 0 16px;
+  height: 32px;
+  background: #060608;
+  border: 1px solid var(--border-subtle);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mockup-tab.active {
+  background: #050507;
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+  z-index: 2;
+}
+
+.mockup-tab svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
 }
 
 .active-pulse {
@@ -279,6 +307,8 @@ h1 {
   display: flex;
   min-height: 380px;
   background: #050507;
+  position: relative;
+  transition: background-color 0.5s ease;
 }
 
 /* Sidebar Folder Tree */
@@ -290,6 +320,7 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: background-color 0.5s ease;
 }
 
 .sidebar-title {
@@ -332,6 +363,10 @@ h1 {
   border-radius: 0 3px 3px 0;
 }
 
+.file-item.flash-glow {
+  animation: sidebar-glow 1.5s ease infinite alternate;
+}
+
 .file-item svg {
   width: 13px;
   height: 13px;
@@ -356,6 +391,7 @@ h1 {
   font-size: 13px;
   color: var(--text-primary);
   white-space: pre-wrap;
+  transition: color 0.5s ease;
 }
 
 /* Highlight tags for Markdown syntax highlighting */
@@ -413,6 +449,67 @@ h1 {
   background-color: rgba(6, 182, 212, 0.2);
 }
 
+/* dynamic notification banners inside the editor */
+.sync-banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-40px);
+  background: var(--panel-accent);
+  border: 1px solid var(--accent-indigo);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 20;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+.sync-banner.active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.sync-banner .banner-pulse {
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent-cyan);
+  border-radius: 50%;
+  animation: pulse-sync 1.5s infinite;
+}
+
+/* Dynamic Themes for the Mockup Editor (Obsidian Redirection) */
+.nord-theme .mockup-layout {
+  background: #2e3440;
+}
+.nord-theme .mockup-sidebar {
+  background: #242933;
+  border-color: #3b4252;
+}
+.nord-theme .mockup-editor {
+  border-color: #3b4252;
+}
+.nord-theme .mockup-logs {
+  background: #20242c;
+  border-color: #3b4252;
+}
+.nord-theme .editor-content {
+  color: #d8dee9;
+}
+.nord-theme .md-h1 {
+  color: #88c0d0;
+  border-color: #3b4252;
+}
+.nord-theme .md-bullet {
+  color: #ebcb8b;
+}
+
 /* Logging Telemetry Pane */
 .mockup-logs {
   width: 25%;
@@ -422,6 +519,7 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  transition: background-color 0.5s ease;
 }
 
 .logs-content {
@@ -651,6 +749,11 @@ footer {
 }
 
 /* Keyframes animations */
+@keyframes sidebar-glow {
+  from { background-color: rgba(99, 102, 241, 0.03); }
+  to { background-color: rgba(99, 102, 241, 0.18); box-shadow: 0 0 10px rgba(99, 102, 241, 0.1); }
+}
+
 @keyframes pulse-sync {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
