@@ -413,7 +413,8 @@ h1 {
   display: inline-flex;
   flex-direction: column;
   z-index: 10;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Switched to transform for hardware-accelerated, buttery smooth gliding */
+  transition: opacity 0.4s ease, transform 0.08s linear;
 }
 
 .cursor-flag {
@@ -425,7 +426,6 @@ h1 {
 .cursor-caret {
   width: 2px;
   height: 16px;
-  background-color: var(--cursor-color);
   animation: blink-caret 0.8s infinite alternate;
 }
 
@@ -433,7 +433,6 @@ h1 {
   position: absolute;
   left: 2px;
   top: -14px;
-  background-color: var(--cursor-color);
   color: #000000;
   font-family: var(--font-mono);
   font-weight: 600;
@@ -882,6 +881,11 @@ footer {
 @keyframes pulse-flow-rev {
   0% { stroke-dashoffset: 0; }
   100% { stroke-dashoffset: 36px; }
+}
+
+@keyframes blink-caret {
+  from, to { opacity: 0; }
+  50% { opacity: 1; }
 }
 
 /* Responsive Overrides */

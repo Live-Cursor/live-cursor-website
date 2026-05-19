@@ -95,16 +95,36 @@
         <!-- Editor canvas -->
         <div class="mockup-editor" id="editor-body">
           <div class="editor-content">
-<div class="editor-line"><span class="md-h1"># Live Cursor</span></div>
-<div class="editor-line"></div>
-<div class="editor-line"><span class="md-bullet">## Welcome</span></div>
-<div class="editor-line">A lightweight, zero-configuration sync engine that boots</div>
-<div class="editor-line">a secure local database daemon with a single click.</div>
-<div class="editor-line"></div>
-<div class="editor-line"><span class="md-bullet">- </span>Completely private</div>
-<div class="editor-line"><span class="md-bullet">- </span>Self-hosted</div>
-<div class="editor-line"><span class="md-bullet">- </span>Real-time</div>
-          </div>
+  <div class="editor-line"><span class="md-h1"># Live Cursor</span></div>
+  <div class="editor-line"></div>
+  <div class="editor-line"><span class="md-bullet">## Welcome</span></div>
+  <div class="editor-line">A lightweight, zero-configuration sync engine that boots</div>
+  
+  <div class="editor-line" style="position: relative; display: flex;">
+    <span id="prefix-panos">a secure local database daemon with a&nbsp;</span><span id="text-panos">single click</span><span>.</span>
+    <div class="sync-cursor" id="cursor-panos" style="opacity: 0; left: 0; top: 2px;">
+      <div class="cursor-flag">
+        <div class="cursor-caret" style="background-color: var(--accent-cyan);"></div>
+        <div class="cursor-tag" style="background-color: var(--accent-cyan);">Panos</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="editor-line"></div>
+  <div class="editor-line"><span class="md-bullet">- </span>Completely private</div>
+  <div class="editor-line"><span class="md-bullet">- </span>Self-hosted</div>
+  <div class="editor-line"><span class="md-bullet">- </span>Real-time</div>
+  
+  <div class="editor-line" style="position: relative; display: flex;">
+    <span class="md-bullet" id="prefix-anna">-&nbsp;</span><span id="text-anna"></span>
+    <div class="sync-cursor" id="cursor-anna" style="opacity: 0; left: 0; top: 2px;">
+      <div class="cursor-flag">
+        <div class="cursor-caret" style="background-color: var(--accent-purple);"></div>
+        <div class="cursor-tag" style="background-color: var(--accent-purple);">Anna</div>
+      </div>
+    </div>
+  </div>
+</div>
         </div>
 
         <!-- Logging Telemetry Panel -->
@@ -262,21 +282,118 @@
   </footer>
 
   <!-- Interactive Tabs Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Interactive tabs for "How it Works" section
-      window.switchVisualTab = function(index) {
-        document.querySelectorAll('.hiw-tab').forEach((tab, i) => {
-          if (i + 1 === index) tab.classList.add('active');
-          else tab.classList.remove('active');
-        });
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Interactive tabs for "How it Works" section
+    window.switchVisualTab = function(index) {
+      document.querySelectorAll('.hiw-tab').forEach((tab, i) => {
+        if (i + 1 === index) tab.classList.add('active');
+        else tab.classList.remove('active');
+      });
 
-        document.querySelectorAll('.hiw-vis-panel').forEach((panel, i) => {
-          if (i + 1 === index) panel.classList.add('active');
-          else panel.classList.remove('active');
-        });
-      };
-    });
-  </script>
+      document.querySelectorAll('.hiw-vis-panel').forEach((panel, i) => {
+        if (i + 1 === index) panel.classList.add('active');
+        else panel.classList.remove('active');
+      });
+    };
+
+    // --- LIVE COLLABORATION ENGINE ---
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    const cAnna = document.getElementById('cursor-anna');
+    const tAnna = document.getElementById('text-anna');
+    
+    const cPanos = document.getElementById('cursor-panos');
+    const tPanos = document.getElementById('text-panos');
+
+    // Dynamically tracks cursor position based on actual rendered font width
+    function updatePos(cursor, prefixId, textId) {
+      const prefixW = document.getElementById(prefixId).getBoundingClientRect().width;
+      const textW = document.getElementById(textId).getBoundingClientRect().width;
+      cursor.style.transform = `translateX(${prefixW + textW}px)`;
+    }
+
+    // Agent 1: Appends text at the bottom
+    async function runAnna() {
+      while (true) {
+        tAnna.textContent = "";
+        updatePos(cAnna, 'prefix-anna', 'text-anna');
+        
+        await sleep(1500);
+        cAnna.style.opacity = '1';
+        await sleep(800);
+        
+        const text1 = "Conflict-free merges";
+        for (let char of text1) {
+          tAnna.textContent += char;
+          updatePos(cAnna, 'prefix-anna', 'text-anna');
+          await sleep(60 + (Math.random() * 40));
+        }
+        
+        await sleep(1200);
+        
+        // Deletes last word
+        for (let i = 0; i < 6; i++) {
+          tAnna.textContent = tAnna.textContent.slice(0, -1);
+          updatePos(cAnna, 'prefix-anna', 'text-anna');
+          await sleep(40);
+        }
+        
+        await sleep(400);
+        
+        const text2 = "offline architecture";
+        for (let char of text2) {
+          tAnna.textContent += char;
+          updatePos(cAnna, 'prefix-anna', 'text-anna');
+          await sleep(60 + (Math.random() * 40));
+        }
+        
+        await sleep(3500);
+        cAnna.style.opacity = '0';
+        await sleep(2000);
+      }
+    }
+
+    // Agent 2: Selects and edits existing text
+    async function runPanos() {
+      while (true) {
+        // Reset state
+        tPanos.textContent = "single click";
+        tPanos.className = "";
+        updatePos(cPanos, 'prefix-panos', 'text-panos');
+        
+        await sleep(3000); // Wait for Anna to start before appearing
+        cPanos.style.opacity = '1';
+        await sleep(1000);
+        
+        // Simulates selecting text (uses your existing .select-span class)
+        tPanos.className = "select-span cyan";
+        await sleep(800);
+        
+        // Deletes selection
+        tPanos.className = "";
+        tPanos.textContent = "";
+        updatePos(cPanos, 'prefix-panos', 'text-panos');
+        await sleep(500);
+        
+        // Types new phrase
+        const newText = "simple toggle";
+        for (let char of newText) {
+          tPanos.textContent += char;
+          updatePos(cPanos, 'prefix-panos', 'text-panos');
+          await sleep(70 + (Math.random() * 50));
+        }
+        
+        await sleep(4000);
+        cPanos.style.opacity = '0';
+        await sleep(3000);
+      }
+    }
+
+    // Start both collaboration loops concurrently
+    runAnna();
+    runPanos();
+  });
+</script>
 </body>
 </html>
