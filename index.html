@@ -87,26 +87,16 @@
 
         <!-- Editor canvas -->
         <div class="mockup-editor" id="editor-body">
-          <!-- Dynamic System Notification Banner -->
-          <div class="sync-banner" id="banner-notification">
-            <div class="banner-pulse"></div>
-            <span id="banner-text">Sync event: Workspace updated</span>
-          </div>
-
-          <div class="editor-content" id="editor-content-pane"></div>
-
-          <!-- Dynamic Multi-Carets Elements -->
-          <div class="sync-cursor" id="cursor-sarah" style="--cursor-color: var(--accent-cyan); display: none;">
-            <div class="cursor-flag">
-              <div class="cursor-caret"></div>
-              <div class="cursor-tag">Sarah</div>
-            </div>
-          </div>
-          <div class="sync-cursor" id="cursor-alex" style="--cursor-color: var(--accent-indigo); display: none;">
-            <div class="cursor-flag">
-              <div class="cursor-caret"></div>
-              <div class="cursor-tag">Alex</div>
-            </div>
+          <div class="editor-content">
+<div class="editor-line"><span class="md-h1"># Live Cursor</span></div>
+<div class="editor-line"></div>
+<div class="editor-line"><span class="md-bullet">## Welcome</span></div>
+<div class="editor-line">A lightweight, zero-configuration sync engine that boots</div>
+<div class="editor-line">a secure local database daemon with a single click.</div>
+<div class="editor-line"></div>
+<div class="editor-line"><span class="md-bullet">- </span>Completely private</div>
+<div class="editor-line"><span class="md-bullet">- </span>Self-hosted</div>
+<div class="editor-line"><span class="md-bullet">- </span>Real-time</div>
           </div>
         </div>
 
@@ -114,9 +104,10 @@
         <div class="mockup-logs">
           <span class="sidebar-title">Sync Telemetry</span>
           <div class="logs-content" id="logs-container">
-            <div class="log-line"><span>[11:04:02]</span> INIT: SQLite sync daemon bind ok</div>
-            <div class="log-line"><span>[11:04:02]</span> INFO: listening on port 1234</div>
-            <div class="log-line sync"><span>[11:04:04]</span> PEER: node connected from local loopback</div>
+            <div class="log-line"><span>[00:00:01]</span> INIT: SQLite sync daemon bind ok</div>
+            <div class="log-line"><span>[00:00:01]</span> INFO: listening on port 1234</div>
+            <div class="log-line"><span>[00:00:02]</span> PEER: node connected from local loopback</div>
+            <div class="log-line sync"><span>[00:00:02]</span> SYNC: Initial sync complete (0 conflicts)</div>
           </div>
         </div>
       </div>
@@ -135,16 +126,16 @@
         <!-- Left Side: Tabs -->
         <div class="hiw-tabs">
           <div class="hiw-tab active" onclick="switchVisualTab(1)">
-            <h3>Conflict-Free Merging</h3>
-            <p>Changes are tracked at the keystroke level using Yjs CRDTs. See how fast updates flow without conflicts.</p>
+            <h3>Concurrent Insertions</h3>
+            <p>See how real-time keystrokes from multiple users perfectly interleave and merge without conflicts using CRDTs.</p>
           </div>
           <div class="hiw-tab" onclick="switchVisualTab(2)">
-            <h3>Real-Time Presence</h3>
-            <p>See exactly who is editing what with native cursor and selection sharing integrated into the editor.</p>
+            <h3>Logical Ordering</h3>
+            <p>Lamport timestamps guarantee that everyone's text ends up in the exact same order, preserving your intention.</p>
           </div>
           <div class="hiw-tab" onclick="switchVisualTab(3)">
-            <h3>Vault-Wide Sync</h3>
-            <p>Beyond text, sync your active panes, layouts, and workspace themes automatically.</p>
+            <h3>Conflict-Free Deletions</h3>
+            <p>Deleted text is hidden using tombstones, preventing divergence even if someone types inside a deleted range.</p>
           </div>
         </div>
 
@@ -152,53 +143,26 @@
         <div class="hiw-visualization-container">
           <!-- Vis 1: CRDT Merge -->
           <div class="hiw-vis-panel active" id="hiw-vis-1">
-            <div class="vis-crdt">
-              <div class="crdt-line">
-                <span class="crdt-text">Obsidian collaboration</span>
-                <span class="crdt-insertion sarah">usually requires servers.</span>
-                <span class="crdt-insertion alex">is easy now.</span>
-              </div>
-              <div class="crdt-merge-arrow">↓</div>
-              <div class="crdt-line result">
-                <span class="crdt-text">Obsidian collaboration</span>
-                <span class="crdt-text">usually requires servers.</span>
-                <span class="crdt-text">is easy now.</span>
-              </div>
-            </div>
-            <p class="vis-caption">Concurrent keystrokes are merged deterministically using Lamport timestamps.</p>
+            <video loop muted autoplay playsinline class="crdt-video">
+              <source src="https://images.zed.dev/blog/crdts/crdt-concurrent-insertion-part-3.mp4" type="video/mp4" />
+            </video>
+            <p class="vis-caption">Concurrent keystrokes are merged deterministically.</p>
           </div>
 
-          <!-- Vis 2: Presence -->
+          <!-- Vis 2: Lamport Ordering -->
           <div class="hiw-vis-panel" id="hiw-vis-2">
-            <div class="vis-presence">
-              <div class="presence-line">
-                <span class="md-h1"># Live Cursor</span>
-              </div>
-              <div class="presence-line mt-2">
-                Seamless real-time <span class="presence-highlight">collaboration</span>
-                <div class="presence-cursor">
-                  <div class="presence-caret"></div>
-                  <div class="presence-tag">Sarah</div>
-                </div>
-              </div>
-            </div>
-            <p class="vis-caption">Highlighting text locks the range visually for all peers instantly.</p>
+            <video loop muted autoplay playsinline class="crdt-video">
+              <source src="https://images.zed.dev/blog/crdts/order-by-lamport.mp4" type="video/mp4" />
+            </video>
+            <p class="vis-caption">Sorting insertions by Lamport timestamps preserves user intent.</p>
           </div>
 
-          <!-- Vis 3: Vault Sync -->
+          <!-- Vis 3: Tombstones -->
           <div class="hiw-vis-panel" id="hiw-vis-3">
-             <div class="vis-vault">
-                <div class="vault-tree">
-                   <div class="tree-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> manifesto.md</div>
-                   <div class="tree-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> brainstorming.md</div>
-                   <div class="tree-item active pulse-sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> settings.json</div>
-                </div>
-                <div class="vault-sync-ring">
-                  <div class="ring-pulse"></div>
-                  <div class="ring-pulse delayed"></div>
-                </div>
-             </div>
-             <p class="vis-caption">Synchronize specific folders or the entire vault configuration securely.</p>
+             <video loop muted autoplay playsinline class="crdt-video">
+              <source src="https://images.zed.dev/blog/crdts/insert-delete.mp4" type="video/mp4" />
+            </video>
+            <p class="vis-caption">Deleted fragments are safely hidden with tombstones.</p>
           </div>
         </div>
       </div>
@@ -286,191 +250,9 @@
     <p class="copyright">Released under the MIT License. Built with Obsidian API and Yjs CRDT structures.</p>
   </footer>
 
-  <!-- Real-Time Collaboration Simulation Script -->
+  <!-- Interactive Tabs Script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const editorPane = document.getElementById('editor-content-pane');
-      const cursorSarah = document.getElementById('cursor-sarah');
-      const cursorAlex = document.getElementById('cursor-alex');
-      const logsContainer = document.getElementById('logs-container');
-      const notificationBanner = document.getElementById('banner-notification');
-      const bannerText = document.getElementById('banner-text');
-      const mockupContainer = document.getElementById('mockup-obsidian');
-
-      // Sidebar & tab targets
-      const sidebarBrainstorming = document.getElementById('sidebar-brainstorming');
-      const sidebarTasks = document.getElementById('sidebar-tasks');
-      const sidebarSettings = document.getElementById('sidebar-settings');
-      const tabBrainstorming = document.getElementById('tab-brainstorming');
-      const tabTasks = document.getElementById('tab-tasks');
-
-      // Content states for document switches
-      let brainstormingContent = [
-        '<span class="md-h1"># Live Cursor Manifesto</span>',
-        '',
-        '<span class="md-bullet">## The Problem</span>',
-        'Obsidian collaboration usually requires Git.',
-        '',
-        '<span class="md-bullet">## The Solution</span>',
-        '',
-        ''
-      ];
-
-      let activeContent = [...brainstormingContent];
-
-      // Render content
-      function renderState(lines) {
-        editorPane.innerHTML = lines.map((line, idx) => `<div class="editor-line" id="line-${idx}">${line || ' '}</div>`).join('');
-      }
-      
-      renderState(activeContent);
-
-      // Caret helper position values
-      function getPositionOfLine(lineNumber, charOffset) {
-        const charWidth = 7.7; 
-        const lineEl = document.getElementById(`line-${lineNumber}`);
-        if (!lineEl) {
-          return {
-            left: (charOffset * charWidth) + 28,
-            top: (lineNumber * 22.1) + 24
-          };
-        }
-        
-        return {
-          left: lineEl.offsetLeft + (charOffset * charWidth),
-          top: lineEl.offsetTop + 3
-        };
-      }
-
-      // Sync log outputs
-      function addLog(module, text, isSync = false) {
-        const time = new Date().toTimeString().split(' ')[0];
-        const logLine = document.createElement('div');
-        logLine.className = isSync ? 'log-line sync' : 'log-line';
-        logLine.innerHTML = `<span>[${time}]</span> ${module}: ${text}`;
-        logsContainer.appendChild(logLine);
-        logsContainer.scrollTop = logsContainer.scrollHeight;
-      }
-
-      // Banner slip-down alert helper
-      function showBanner(text) {
-        bannerText.textContent = text;
-        notificationBanner.classList.add('active');
-        setTimeout(() => {
-          notificationBanner.classList.remove('active');
-        }, 3500);
-      }
-
-      function typeText(lineNumber, prefix, textToType, suffix, cursorElement, speed = 40) {
-        return new Promise(resolve => {
-          let i = 0;
-          function typeChar() {
-            if (i < textToType.length) {
-              const currentTyped = textToType.substring(0, i + 1);
-              
-              // Remove html tags from prefix to get true char count
-              const rawPrefix = prefix.replace(/<[^>]*>?/gm, '');
-              const charOffset = rawPrefix.length + currentTyped.length;
-              
-              activeContent[lineNumber] = prefix + currentTyped + suffix;
-              renderState(activeContent);
-              
-              const pos = getPositionOfLine(lineNumber, charOffset);
-              cursorElement.style.left = pos.left + 'px';
-              cursorElement.style.top = pos.top + 'px';
-              
-              i++;
-              setTimeout(typeChar, speed + (Math.random() * 30));
-            } else {
-              resolve();
-            }
-          }
-          typeChar();
-        });
-      }
-
-      async function runSimulationLoop() {
-        while (true) {
-          // Step 0: Sarah connects
-          cursorSarah.style.display = 'inline-flex';
-          const pos = getPositionOfLine(3, 44);
-          cursorSarah.style.left = pos.left + 'px';
-          cursorSarah.style.top = pos.top + 'px';
-          addLog('PEER', 'Sarah joined active workspace');
-          await new Promise(r => setTimeout(r, 1500));
-
-          // Step 1: Sarah highlights "Git."
-          activeContent[3] = 'Obsidian collaboration usually requires <span class="select-span cyan">Git.</span>';
-          renderState(activeContent);
-          addLog('SYNC', 'Sarah locked text range 3:40 - 3:44', true);
-          await new Promise(r => setTimeout(r, 1000));
-
-          // Step 2: Sarah types replacement
-          activeContent[3] = 'Obsidian collaboration usually requires ';
-          renderState(activeContent);
-          addLog('SYNC', 'Sarah updated range buffer', true);
-          await typeText(3, 'Obsidian collaboration usually requires ', 'external servers.', '', cursorSarah, 35);
-          await new Promise(r => setTimeout(r, 1000));
-
-          // Step 3: Alex connects
-          cursorAlex.style.display = 'inline-flex';
-          let alexPos = getPositionOfLine(6, 0);
-          cursorAlex.style.left = alexPos.left + 'px';
-          cursorAlex.style.top = alexPos.top + 'px';
-          addLog('PEER', 'Alex joined active workspace');
-          await new Promise(r => setTimeout(r, 1000));
-
-          // Step 4: Alex starts typing
-          addLog('SYNC', 'Alex locked text range 6:0 - 6:8', true);
-          await typeText(6, '', 'A local P2P', '', cursorAlex, 40);
-          
-          // Sarah moves down to type bullet
-          const sarahPos = getPositionOfLine(7, 0);
-          cursorSarah.style.left = sarahPos.left + 'px';
-          cursorSarah.style.top = sarahPos.top + 'px';
-          addLog('SYNC', 'Sarah cursor position updated');
-
-          // Step 5: Concurrent typing (both type at the same time)
-          const p1 = typeText(6, 'A local P2P', ' sync engine directly in your vault.', '', cursorAlex, 40);
-          const p2 = typeText(7, '<span class="md-bullet">- </span>', 'Zero privacy leaks.', '', cursorSarah, 45);
-          
-          await Promise.all([p1, p2]);
-          addLog('SYNC', 'Merged concurrent multi-line edits', true);
-          await new Promise(r => setTimeout(r, 1500));
-
-          // Step 6: Both move to top for review
-          cursorAlex.style.top = getPositionOfLine(0, 23).top + 'px';
-          cursorAlex.style.left = getPositionOfLine(0, 23).left + 'px';
-          
-          cursorSarah.style.top = getPositionOfLine(2, 14).top + 'px';
-          cursorSarah.style.left = getPositionOfLine(2, 14).left + 'px';
-          addLog('SYNC', 'Workspace scroll position aligned', true);
-          await new Promise(r => setTimeout(r, 1500));
-
-          // Step 7: Final tags and finish
-          activeContent[0] = '<span class="md-h1"># Live Cursor Manifesto</span> <span class="md-tag">@team</span>';
-          activeContent[2] = '<span class="md-bullet">## <span class="select-span cyan">The Problem</span></span>';
-          renderState(activeContent);
-          
-          showBanner('Collaborative Sync: 2 peers active, 0 conflicts');
-          addLog('SYNC', 'Finalized concurrent session state', true);
-          await new Promise(r => setTimeout(r, 4500));
-
-          // Reset Loop
-          activeContent = [...brainstormingContent];
-          renderState(activeContent);
-          
-          cursorSarah.style.display = 'none';
-          cursorAlex.style.display = 'none';
-          
-          addLog('INIT', 'Collaboration simulation sequence reset');
-          await new Promise(r => setTimeout(r, 2500));
-        }
-      }
-
-      // Start the simulation loop
-      setTimeout(runSimulationLoop, 800);
-      
       // Interactive tabs for "How it Works" section
       window.switchVisualTab = function(index) {
         document.querySelectorAll('.hiw-tab').forEach((tab, i) => {
