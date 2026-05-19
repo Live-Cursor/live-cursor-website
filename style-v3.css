@@ -784,7 +784,7 @@ footer {
   border-radius: 12px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   background: transparent;
 }
 
@@ -802,13 +802,16 @@ footer {
 }
 
 .hiw-tab:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
 }
 
 .hiw-tab.active {
   background: var(--bg-card);
   border-color: var(--border-subtle);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transform: translateX(0);
 }
 
 .hiw-visualization-container {
@@ -898,6 +901,7 @@ footer {
   .flow-diagram {
     flex-direction: column;
     align-items: center;
+    gap: 0;
   }
   .flow-connector {
     width: 2px;
@@ -906,5 +910,20 @@ footer {
   }
   .flow-svg {
     display: none;
+  }
+  .flow-node {
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .flow-node:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 40px;
+    background: var(--accent-indigo);
+    opacity: 0.5;
   }
 }

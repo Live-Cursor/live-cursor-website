@@ -33,9 +33,16 @@
       A lightweight, zero-configuration sync engine that boots a secure local database daemon with a single click. Keep your markdown notes completely private, self-hosted, and sync'd in real time.
     </p>
 
-    <div class="hero-ctas">
-      <a href="https://github.com/Live-Cursor/Live-Cursor" class="btn-primary">Deploy Core Engine</a>
-      <a href="#features" class="btn-secondary">Explore Architecture</a>
+    <div class="hero-ctas" style="flex-direction: column; align-items: center; gap: 20px;">
+      <div style="display: flex; gap: 14px;">
+        <a href="https://github.com/Live-Cursor/Live-Cursor" class="btn-primary">Get the Plugin</a>
+        <a href="#features" class="btn-secondary">Explore Architecture</a>
+      </div>
+      
+      <div style="background: var(--panel-bg, #111); border: 1px solid var(--border-subtle); padding: 12px 16px; border-radius: 6px; display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 13px; margin-top: 10px;">
+        <span style="color: var(--text-muted);">$</span>
+        <span style="color: var(--text-primary);">docker run -d -p 1234:1234 live-cursor/daemon</span>
+      </div>
     </div>
 
     <!-- Pixel-Perfect Obsidian Mockup Container -->
