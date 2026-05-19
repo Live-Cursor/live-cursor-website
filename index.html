@@ -354,115 +354,102 @@
         }, 3500);
       }
 
-      let step = 0;
+      function typeText(lineNumber, prefix, textToType, suffix, cursorElement, speed = 40) {
+        return new Promise(resolve => {
+          let i = 0;
+          function typeChar() {
+            if (i < textToType.length) {
+              const currentTyped = textToType.substring(0, i + 1);
+              
+              // Remove html tags from prefix to get true char count
+              const rawPrefix = prefix.replace(/<[^>]*>?/gm, '');
+              const charOffset = rawPrefix.length + currentTyped.length;
+              
+              activeContent[lineNumber] = prefix + currentTyped + suffix;
+              renderState(activeContent);
+              
+              const pos = getPositionOfLine(lineNumber, charOffset);
+              cursorElement.style.left = pos.left + 'px';
+              cursorElement.style.top = pos.top + 'px';
+              
+              i++;
+              setTimeout(typeChar, speed + (Math.random() * 30));
+            } else {
+              resolve();
+            }
+          }
+          typeChar();
+        });
+      }
 
-      function runSimulationStep() {
-        if (step === 0) {
-          // Sarah connects and goes to line 3
+      async function runSimulationLoop() {
+        while (true) {
+          // Step 0: Sarah connects
           cursorSarah.style.display = 'inline-flex';
           const pos = getPositionOfLine(3, 44);
           cursorSarah.style.left = pos.left + 'px';
           cursorSarah.style.top = pos.top + 'px';
           addLog('PEER', 'Sarah joined active workspace');
-          
-          step++;
-          setTimeout(runSimulationStep, 1500);
-        }
-        else if (step === 1) {
-          // Sarah highlights "Git."
+          await new Promise(r => setTimeout(r, 1500));
+
+          // Step 1: Sarah highlights "Git."
           activeContent[3] = 'Obsidian collaboration usually requires <span class="select-span cyan">Git.</span>';
           renderState(activeContent);
           addLog('SYNC', 'Sarah locked text range 3:40 - 3:44', true);
-          
-          step++;
-          setTimeout(runSimulationStep, 1200);
-        }
-        else if (step === 2) {
-          // Sarah replaces "Git." with "external servers."
-          activeContent[3] = 'Obsidian collaboration usually requires external servers.';
+          await new Promise(r => setTimeout(r, 1000));
+
+          // Step 2: Sarah types replacement
+          activeContent[3] = 'Obsidian collaboration usually requires ';
           renderState(activeContent);
-          const pos = getPositionOfLine(3, 57);
-          cursorSarah.style.left = pos.left + 'px';
-          cursorSarah.style.top = pos.top + 'px';
-          addLog('SYNC', 'Sarah updated range buffer (CRDT merge ok)', true);
-          
-          step++;
-          setTimeout(runSimulationStep, 1500);
-        }
-        else if (step === 3) {
-          // Alex connects and starts typing on line 6 concurrently
+          addLog('SYNC', 'Sarah updated range buffer', true);
+          await typeText(3, 'Obsidian collaboration usually requires ', 'external servers.', '', cursorSarah, 35);
+          await new Promise(r => setTimeout(r, 1000));
+
+          // Step 3: Alex connects
           cursorAlex.style.display = 'inline-flex';
-          const pos = getPositionOfLine(6, 0);
-          cursorAlex.style.left = pos.left + 'px';
-          cursorAlex.style.top = pos.top + 'px';
+          let alexPos = getPositionOfLine(6, 0);
+          cursorAlex.style.left = alexPos.left + 'px';
+          cursorAlex.style.top = alexPos.top + 'px';
           addLog('PEER', 'Alex joined active workspace');
+          await new Promise(r => setTimeout(r, 1000));
+
+          // Step 4: Alex starts typing
+          addLog('SYNC', 'Alex locked text range 6:0 - 6:8', true);
+          await typeText(6, '', 'A local P2P', '', cursorAlex, 40);
           
-          step++;
-          setTimeout(runSimulationStep, 1200);
-        }
-        else if (step === 4) {
-          // Alex types "A local P2P sync engine "
-          activeContent[6] = 'A local <span class="select-span">P2P sync</span> engine ';
-          renderState(activeContent);
-          const pos = getPositionOfLine(6, 25);
-          cursorAlex.style.left = pos.left + 'px';
-          cursorAlex.style.top = pos.top + 'px';
-          addLog('SYNC', 'Alex locked text range 6:8 - 6:16', true);
-          
-          step++;
-          setTimeout(runSimulationStep, 1400);
-        }
-        else if (step === 5) {
-          // Sarah jumps down to line 7 to add a bullet
-          const pos = getPositionOfLine(7, 0);
-          cursorSarah.style.left = pos.left + 'px';
-          cursorSarah.style.top = pos.top + 'px';
+          // Sarah moves down to type bullet
+          const sarahPos = getPositionOfLine(7, 0);
+          cursorSarah.style.left = sarahPos.left + 'px';
+          cursorSarah.style.top = sarahPos.top + 'px';
           addLog('SYNC', 'Sarah cursor position updated');
 
-          step++;
-          setTimeout(runSimulationStep, 1200);
-        }
-        else if (step === 6) {
-          // Alex finishes his line, Sarah types bullet
-          activeContent[6] = 'A local P2P sync engine directly in your vault.';
-          activeContent[7] = '<span class="md-bullet">- </span>Zero privacy leaks.';
-          renderState(activeContent);
+          // Step 5: Concurrent typing (both type at the same time)
+          const p1 = typeText(6, 'A local P2P', ' sync engine directly in your vault.', '', cursorAlex, 40);
+          const p2 = typeText(7, '<span class="md-bullet">- </span>', 'Zero privacy leaks.', '', cursorSarah, 45);
           
-          cursorAlex.style.left = getPositionOfLine(6, 47).left + 'px';
-          cursorSarah.style.left = getPositionOfLine(7, 19).left + 'px';
-          
+          await Promise.all([p1, p2]);
           addLog('SYNC', 'Merged concurrent multi-line edits', true);
-          
-          step++;
-          setTimeout(runSimulationStep, 2000);
-        }
-        else if (step === 7) {
-          // Both move to top headers to finalize and review
+          await new Promise(r => setTimeout(r, 1500));
+
+          // Step 6: Both move to top for review
           cursorAlex.style.top = getPositionOfLine(0, 23).top + 'px';
           cursorAlex.style.left = getPositionOfLine(0, 23).left + 'px';
           
           cursorSarah.style.top = getPositionOfLine(2, 14).top + 'px';
           cursorSarah.style.left = getPositionOfLine(2, 14).left + 'px';
-          
           addLog('SYNC', 'Workspace scroll position aligned', true);
-          
-          step++;
-          setTimeout(runSimulationStep, 1500);
-        }
-        else if (step === 8) {
-          // Add collaborative tags and highlight
+          await new Promise(r => setTimeout(r, 1500));
+
+          // Step 7: Final tags and finish
           activeContent[0] = '<span class="md-h1"># Live Cursor Manifesto</span> <span class="md-tag">@team</span>';
           activeContent[2] = '<span class="md-bullet">## <span class="select-span cyan">The Problem</span></span>';
           renderState(activeContent);
           
           showBanner('Collaborative Sync: 2 peers active, 0 conflicts');
           addLog('SYNC', 'Finalized concurrent session state', true);
-          
-          step++;
-          setTimeout(runSimulationStep, 4500);
-        }
-        else {
-          // --- LOOP RESET ---
+          await new Promise(r => setTimeout(r, 4500));
+
+          // Reset Loop
           activeContent = [...brainstormingContent];
           renderState(activeContent);
           
@@ -470,13 +457,12 @@
           cursorAlex.style.display = 'none';
           
           addLog('INIT', 'Collaboration simulation sequence reset');
-          step = 0;
-          setTimeout(runSimulationStep, 2500);
+          await new Promise(r => setTimeout(r, 2500));
         }
       }
 
       // Start the simulation loop
-      setTimeout(runSimulationStep, 800);
+      setTimeout(runSimulationLoop, 800);
       
       // Interactive tabs for "How it Works" section
       window.switchVisualTab = function(index) {
