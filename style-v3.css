@@ -395,6 +395,10 @@ h1 {
   transition: color 0.5s ease;
 }
 
+.editor-line {
+  min-height: 22.1px;
+}
+
 /* Highlight tags for Markdown syntax highlighting */
 .md-h1 { color: #fdfdfd; font-size: 16px; font-weight: 700; display: block; margin-bottom: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 4px; font-family: var(--font-sans); }
 .md-bullet { color: var(--accent-indigo); font-weight: bold; }

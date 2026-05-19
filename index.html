@@ -320,7 +320,7 @@
 
       // Render content
       function renderState(lines) {
-        editorPane.innerHTML = lines.join('\n');
+        editorPane.innerHTML = lines.map((line, idx) => `<div class="editor-line" id="line-${idx}">${line || ' '}</div>`).join('');
       }
       
       renderState(activeContent);
@@ -328,10 +328,17 @@
       // Caret helper position values
       function getPositionOfLine(lineNumber, charOffset) {
         const charWidth = 7.7; 
-        const lineHeight = 22.1; 
+        const lineEl = document.getElementById(`line-${lineNumber}`);
+        if (!lineEl) {
+          return {
+            left: (charOffset * charWidth) + 28,
+            top: (lineNumber * 22.1) + 24
+          };
+        }
+        
         return {
-          left: (charOffset * charWidth) + 28,
-          top: (lineNumber * lineHeight) + 24
+          left: lineEl.offsetLeft + (charOffset * charWidth),
+          top: lineEl.offsetTop + 3
         };
       }
 
