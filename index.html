@@ -305,6 +305,29 @@
     
     const cPanos = document.getElementById('cursor-panos');
     const tPanos = document.getElementById('text-panos');
+    
+    const logsContainer = document.getElementById('logs-container');
+    const startTime = Date.now();
+
+    function addLog(msg, type = '') {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const min = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const sec = String(elapsed % 60).padStart(2, '0');
+      const timeStr = `[00:${min}:${sec}]`;
+
+      const div = document.createElement('div');
+      div.className = `log-line${type ? ' ' + type : ''}`;
+      div.innerHTML = `<span>${timeStr}</span> ${msg}`;
+      
+      logsContainer.appendChild(div);
+      
+      // Keep only the last 10 logs to prevent overflow
+      while (logsContainer.children.length > 10) {
+        logsContainer.removeChild(logsContainer.firstChild);
+      }
+      
+      logsContainer.scrollTop = logsContainer.scrollHeight;
+    }
 
     // Dynamically tracks cursor position based on actual rendered font width
     function updatePos(cursor, prefixId, textId) {
@@ -321,35 +344,44 @@
         
         await sleep(1500);
         cAnna.style.opacity = '1';
+        addLog("PEER: Anna joined active collaborative session", "anna");
         await sleep(800);
         
+        addLog("PEER: Anna started typing at line 14...", "anna");
         const text1 = "Conflict-free merges";
         for (let char of text1) {
           tAnna.textContent += char;
           updatePos(cAnna, 'prefix-anna', 'text-anna');
           await sleep(60 + (Math.random() * 40));
         }
+        addLog("SYNC: Recv delta update (+20 chars) from Anna", "sync");
         
         await sleep(1200);
         
+        addLog("PEER: Anna backspacing last word...", "anna");
         // Deletes last word
         for (let i = 0; i < 6; i++) {
           tAnna.textContent = tAnna.textContent.slice(0, -1);
           updatePos(cAnna, 'prefix-anna', 'text-anna');
           await sleep(40);
         }
+        addLog("SYNC: Recv delta update (-6 chars) from Anna", "sync");
         
         await sleep(400);
         
+        addLog("PEER: Anna typing correction...", "anna");
         const text2 = "offline architecture";
         for (let char of text2) {
           tAnna.textContent += char;
           updatePos(cAnna, 'prefix-anna', 'text-anna');
           await sleep(60 + (Math.random() * 40));
         }
+        addLog("SYNC: Recv delta update (+20 chars) from Anna", "sync");
+        addLog("SYNC: State converged (0 conflicts)", "sync");
         
         await sleep(3500);
         cAnna.style.opacity = '0';
+        addLog("PEER: Anna disconnected (session idle)", "anna");
         await sleep(2000);
       }
     }
@@ -364,8 +396,10 @@
         
         await sleep(3000); // Wait for Anna to start before appearing
         cPanos.style.opacity = '1';
+        addLog("PEER: Panos joined active collaborative session", "panos");
         await sleep(1000);
         
+        addLog("PEER: Panos selected range [118-130] \"single click\"", "panos");
         // Simulates selecting text (uses your existing .select-span class)
         tPanos.className = "select-span cyan";
         await sleep(800);
@@ -374,8 +408,10 @@
         tPanos.className = "";
         tPanos.textContent = "";
         updatePos(cPanos, 'prefix-panos', 'text-panos');
+        addLog("SYNC: Recv delta update (-12 chars) from Panos", "sync");
         await sleep(500);
         
+        addLog("PEER: Panos replacing selected text...", "panos");
         // Types new phrase
         const newText = "simple toggle";
         for (let char of newText) {
@@ -383,9 +419,12 @@
           updatePos(cPanos, 'prefix-panos', 'text-panos');
           await sleep(70 + (Math.random() * 50));
         }
+        addLog("SYNC: Recv delta update (+13 chars) from Panos", "sync");
+        addLog("SYNC: State converged (0 conflicts)", "sync");
         
         await sleep(4000);
         cPanos.style.opacity = '0';
+        addLog("PEER: Panos disconnected (session idle)", "panos");
         await sleep(3000);
       }
     }

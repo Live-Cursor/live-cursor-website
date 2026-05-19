@@ -219,7 +219,7 @@ h1 {
 /* High-Fidelity Obsidian Editor Mockup */
 .mockup-container {
   width: 100%;
-  max-width: 960px;
+  max-width: 1040px;
   background: var(--panel-bg);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
@@ -305,7 +305,7 @@ h1 {
 
 .mockup-layout {
   display: flex;
-  min-height: 380px;
+  min-height: 460px;
   background: #050507;
   position: relative;
   transition: background-color 0.5s ease;
@@ -388,7 +388,7 @@ h1 {
 
 .editor-content {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-primary);
   white-space: pre;
   overflow-x: hidden;
@@ -396,11 +396,11 @@ h1 {
 }
 
 .editor-line {
-  min-height: 22.1px;
+  min-height: 26px;
 }
 
 /* Highlight tags for Markdown syntax highlighting */
-.md-h1 { color: #fdfdfd; font-size: 16px; font-weight: 700; display: block; margin-bottom: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 4px; font-family: var(--font-sans); }
+.md-h1 { color: #fdfdfd; font-size: 18px; font-weight: 700; display: block; margin-bottom: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 4px; font-family: var(--font-sans); }
 .md-bullet { color: var(--accent-indigo); font-weight: bold; }
 .md-checked { color: var(--text-muted); text-decoration: line-through; }
 .md-block { color: var(--text-secondary); background: var(--panel-accent); padding: 4px 8px; border-radius: 4px; display: block; border-left: 2px solid var(--text-muted); margin: 8px 0; }
@@ -425,18 +425,18 @@ h1 {
 
 .cursor-caret {
   width: 2px;
-  height: 16px;
+  height: 18px;
   animation: blink-caret 0.8s infinite alternate;
 }
 
 .cursor-tag {
   position: absolute;
   left: 2px;
-  top: -14px;
+  top: -16px;
   color: #000000;
   font-family: var(--font-mono);
   font-weight: 600;
-  font-size: 9px;
+  font-size: 10px;
   padding: 1px 5px;
   border-radius: 2px;
   white-space: nowrap;
@@ -547,6 +547,12 @@ h1 {
 }
 .log-line.sync {
   color: var(--accent-indigo);
+}
+.log-line.anna {
+  color: #c084fc;
+}
+.log-line.panos {
+  color: #22d3ee;
 }
 
 /* Features Grid */
