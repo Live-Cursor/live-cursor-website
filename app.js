@@ -29,92 +29,88 @@ document.addEventListener('DOMContentLoaded', () => {
   async function runHeroAnimation() {
     if (!heroTextMain || !heroCursor1 || !heroTextFinale || !heroCursor2) return;
 
-    while (true) {
-      const shuffled = [...allPlugins].sort(() => 0.5 - Math.random());
-      const competitors = shuffled.slice(0, 3);
+    const shuffled = [...allPlugins].sort(() => 0.5 - Math.random());
+    const competitors = shuffled.slice(0, 3);
+
+    heroTextMain.textContent = "";
+    heroTextFinale.textContent = "";
+    heroTextMain.className = "";
+    heroCursor1.classList.remove("hidden", "is-typing");
+    heroCursor2.classList.add("hidden");
+    heroCursor2.classList.remove("is-typing");
+
+    await sleep(1000);
+
+    // --- PHASE 1: THE COMPETITOR BATTLE ---
+    for (let i = 0; i < competitors.length; i++) {
+      const word = competitors[i];
+      const isCursor1Turn = (i % 2 === 0);
+      const typingCursor = isCursor1Turn ? heroCursor1 : heroCursor2;
+      const deletingCursor = isCursor1Turn ? heroCursor2 : heroCursor1;
+      const highlightClass = isCursor1Turn ? "highlight-blue" : "highlight-white";
+
+      heroTextMain.parentNode.insertBefore(typingCursor, heroTextFinale);
+      heroTextMain.parentNode.insertBefore(deletingCursor, heroTextFinale);
+
+      typingCursor.classList.remove("hidden");
+      deletingCursor.classList.add("hidden");
+
+      // Type competitor
+      typingCursor.classList.add("is-typing");
+      for (let char of word) {
+        heroTextMain.textContent += char;
+        await sleep(70 + Math.random() * 50);
+      }
+      typingCursor.classList.remove("is-typing");
+
+      await sleep(600);
+
+      // Highlight and delete
+      typingCursor.classList.add("hidden");
+      deletingCursor.classList.remove("hidden");
+      heroTextMain.classList.add(highlightClass);
+
+      await sleep(400);
 
       heroTextMain.textContent = "";
-      heroTextFinale.textContent = "";
-      heroTextMain.className = "";
-      heroCursor1.classList.remove("hidden", "is-typing");
-      heroCursor2.classList.add("hidden");
-      heroCursor2.classList.remove("is-typing");
+      heroTextMain.classList.remove(highlightClass);
 
-      await sleep(1000);
-
-      // --- PHASE 1: THE COMPETITOR BATTLE ---
-      for (let i = 0; i < competitors.length; i++) {
-        const word = competitors[i];
-        const isCursor1Turn = (i % 2 === 0);
-        const typingCursor = isCursor1Turn ? heroCursor1 : heroCursor2;
-        const deletingCursor = isCursor1Turn ? heroCursor2 : heroCursor1;
-        const highlightClass = isCursor1Turn ? "highlight-blue" : "highlight-white";
-
-        heroTextMain.parentNode.insertBefore(typingCursor, heroTextFinale);
-        heroTextMain.parentNode.insertBefore(deletingCursor, heroTextFinale);
-
-        typingCursor.classList.remove("hidden");
-        deletingCursor.classList.add("hidden");
-
-        // Type competitor
-        typingCursor.classList.add("is-typing");
-        for (let char of word) {
-          heroTextMain.textContent += char;
-          await sleep(70 + Math.random() * 50);
-        }
-        typingCursor.classList.remove("is-typing");
-
-        await sleep(600);
-
-        // Highlight and delete
-        typingCursor.classList.add("hidden");
-        deletingCursor.classList.remove("hidden");
-        heroTextMain.classList.add(highlightClass);
-
-        await sleep(400);
-
-        heroTextMain.textContent = "";
-        heroTextMain.classList.remove(highlightClass);
-
-        await sleep(300);
-      }
-
-      // --- PHASE 2: THE COLLABORATIVE FINALE ---
-      heroTextMain.parentNode.appendChild(heroCursor2); 
-      
-      heroCursor1.classList.remove("hidden");
-      heroCursor2.classList.remove("hidden");
-
-      const wordLeft = "Live-";
-      const wordRight = "Cursor";
-
-      async function typeLeft() {
-        heroCursor1.classList.add("is-typing");
-        for (let char of wordLeft) {
-          heroTextMain.textContent += char;
-          await sleep(100 + Math.random() * 100);
-        }
-        heroCursor1.classList.remove("is-typing");
-      }
-
-      async function typeRight() {
-        heroCursor2.classList.add("is-typing");
-        for (let char of wordRight) {
-          heroTextFinale.textContent += char;
-          await sleep(100 + Math.random() * 100);
-        }
-        heroCursor2.classList.remove("is-typing");
-      }
-
-      await sleep(200);
-      await Promise.all([typeLeft(), typeRight()]);
-
-      await sleep(800);
-      heroCursor1.classList.add("hidden");
-      heroCursor2.classList.add("hidden");
-
-      await sleep(6000); // Wait before restarting the loop
+      await sleep(300);
     }
+
+    // --- PHASE 2: THE COLLABORATIVE FINALE ---
+    heroTextMain.parentNode.appendChild(heroCursor2); 
+    
+    heroCursor1.classList.remove("hidden");
+    heroCursor2.classList.remove("hidden");
+
+    const wordLeft = "Live-";
+    const wordRight = "Cursor";
+
+    async function typeLeft() {
+      heroCursor1.classList.add("is-typing");
+      for (let char of wordLeft) {
+        heroTextMain.textContent += char;
+        await sleep(100 + Math.random() * 100);
+      }
+      heroCursor1.classList.remove("is-typing");
+    }
+
+    async function typeRight() {
+      heroCursor2.classList.add("is-typing");
+      for (let char of wordRight) {
+        heroTextFinale.textContent += char;
+        await sleep(100 + Math.random() * 100);
+      }
+      heroCursor2.classList.remove("is-typing");
+    }
+
+    await sleep(200);
+    await Promise.all([typeLeft(), typeRight()]);
+
+    await sleep(800);
+    heroCursor1.classList.add("hidden");
+    heroCursor2.classList.add("hidden");
   }
 
   // --- 3. DYNAMIC OBSIDIAN EDITOR MOCKUP COLLABORATION ---
