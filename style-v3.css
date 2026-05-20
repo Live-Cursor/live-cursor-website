@@ -219,8 +219,8 @@ h1 {
 
 /* High-Fidelity Obsidian Editor Mockup */
 .mockup-container {
-  width: 1040px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 1040px;
   min-width: 300px;
   background: var(--panel-bg);
   border: 1px solid var(--border-subtle);
