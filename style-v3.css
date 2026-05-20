@@ -1041,19 +1041,22 @@ footer {
   }
 }
 
-/* --- Hero Animation Text Selection Effects --- */
+/* Remove the permanent global padding from the text base */
 #text-main {
-  padding: 0 4px;
-  border-radius: 4px;
   transition: background-color 0.1s;
 }
 
+/* Move the padding and border-radius directly into the active highlights */
 .highlight-blue {
-  background-color: rgba(99, 102, 241, 0.4); /* Matches your accent-indigo */
+  background-color: rgba(99, 102, 241, 0.4);
+  padding: 0 6px;
+  border-radius: 4px;
 }
 
 .highlight-white {
   background-color: rgba(255, 255, 255, 0.2);
+  padding: 0 6px;
+  border-radius: 4px;
 }
 
 .hidden {
