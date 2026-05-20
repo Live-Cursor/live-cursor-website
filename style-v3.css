@@ -615,22 +615,22 @@ h1 {
 
 .card-num {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-muted);
   display: block;
   margin-bottom: 20px;
 }
 
 .feature-card h3 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: var(--text-primary);
 }
 
 .feature-card p {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
 }
 
@@ -916,6 +916,29 @@ footer {
   }
   .hero {
     padding: 80px 20px 60px 20px;
+  }
+  
+  .features-section {
+    padding: 60px 20px;
+  }
+  .section-title {
+    font-size: 28px;
+  }
+  .section-subtitle {
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+  .features-grid {
+    gap: 16px;
+  }
+  .feature-card {
+    padding: 24px 20px;
+  }
+  .feature-card h3 {
+    font-size: 18px;
+  }
+  .feature-card p {
+    font-size: 14px;
   }
   .flow-diagram {
     flex-direction: column;
