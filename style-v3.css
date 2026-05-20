@@ -384,9 +384,10 @@ h1 {
 
 .editor-content {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: clamp(11px, 1.45cqi, 14.5px);
   color: var(--text-primary);
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-word;
   overflow-x: hidden;
   transition: color 0.5s ease;
 }
@@ -531,7 +532,7 @@ h1 {
 
 .logs-content {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: clamp(8px, 1.1cqi, 10.5px);
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
@@ -541,9 +542,10 @@ h1 {
 }
 
 .log-line {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding-left: 17ch;
+  text-indent: -17ch;
 }
 .log-line span {
   color: var(--text-secondary);
@@ -585,8 +587,20 @@ h1 {
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(1, 1fr);
   gap: 20px;
+}
+
+@media (min-width: 600px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .feature-card {
@@ -962,7 +976,7 @@ footer {
 }
 
 /* Dynamic Container Queries for the Resizable Mockup */
-@container mockup (max-width: 768px) {
+@container mockup (max-width: 820px) {
   .mockup-sidebar, .mockup-logs {
     display: none;
   }
