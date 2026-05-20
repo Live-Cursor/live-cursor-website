@@ -990,17 +990,55 @@ footer {
 
 .hero-animation .cursor {
   display: inline-block;
-  width: 4px; /* Thicker to match the heavy bold weight of the larger text */
-  height: 1.05em; /* 'em' units ensure the cursor automatically scales perfectly with the font-size */
+  position: relative;
+  width: 4px;
+  height: 1.05em;
   margin-left: 4px;
-  background-color: #ffffff;
-  animation: blink-hero 1s step-end infinite;
   vertical-align: middle;
-  border-radius: 2px;
 }
 
-.hero-animation .cursor-blue {
+.hero-animation .cursor::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--accent-cyan);
+  border-radius: 2px;
+  animation: blink-hero 1s step-end infinite;
+}
+
+.hero-animation .cursor.is-typing::before {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+.hero-animation .cursor-blue::before {
   background-color: var(--accent-indigo, #6366f1);
+}
+
+.hero-animation .cursor::after {
+  content: 'Alex';
+  position: absolute;
+  top: -18px;
+  left: 6px;
+  background-color: var(--accent-cyan);
+  color: #000;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.hero-animation .cursor-blue::after {
+  content: 'Sarah';
+  background-color: var(--accent-indigo, #6366f1);
+  color: #fff;
 }
 
 @keyframes blink-hero {
