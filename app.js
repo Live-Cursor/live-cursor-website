@@ -1,6 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+  // --- THEME SWITCHER LOGIC ---
+  const themeToggles = document.querySelectorAll('.theme-toggle');
+  
+  function getTheme() {
+    return document.documentElement.getAttribute('data-theme') || 'dark';
+  }
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }
+
+  themeToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const currentTheme = getTheme();
+      const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+      setTheme(nextTheme);
+    });
+  });
+
   // --- 1. INTERACTIVE TABS FOR "HOW IT WORKS" ---
   window.switchVisualTab = function(index) {
     document.querySelectorAll('.hiw-tab').forEach((tab, i) => {
