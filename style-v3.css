@@ -946,17 +946,19 @@ footer {
 }
 
 /* ==========================================================================
-   Hero Section Concurrent "Battle of the Cursors" Animation Styles
+   UPDATED: Large Hero Section Animation (Layout Shift Fixed)
    ========================================================================== */
 .hero-animation {
   font-family: var(--font-sans);
-  font-size: clamp(34px, 5vw, 56px);
+  font-size: clamp(40px, 6vw, 68px); /* Massive, high-impact hero scale */
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.1;
   letter-spacing: -0.04em;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   color: var(--text-primary);
-  min-height: 140px; /* Prevents severe page layout shifts during loops */
+  
+  /* LOCK LAYOUT: Prevents the text underneath from moving when strings are deleted */
+  min-height: 95px; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -973,12 +975,13 @@ footer {
 
 .hero-animation .cursor {
   display: inline-block;
-  width: 3px; /* Sharp and realistic */
-  height: clamp(32px, 4.5vw, 46px); /* Scales cleanly with clamp font sizes */
-  margin-left: 2px;
+  width: 4px; /* Thicker to match the heavy bold weight of the larger text */
+  height: 1.05em; /* 'em' units ensure the cursor automatically scales perfectly with the font-size */
+  margin-left: 4px;
   background-color: #ffffff;
   animation: blink-hero 1s step-end infinite;
   vertical-align: middle;
+  border-radius: 2px;
 }
 
 .hero-animation .cursor-blue {
