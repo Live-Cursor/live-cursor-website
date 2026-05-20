@@ -252,7 +252,212 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- 4. START ALL ANIMATION LOOPS ---
+  // --- 4. NEW: MOBILE DRAWER MENU TOGGLE ---
+  const menuToggle = document.getElementById('mobile-menu-toggle');
+  const navDrawer = document.getElementById('mobile-nav-drawer');
+
+  if (menuToggle && navDrawer) {
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('open');
+      navDrawer.classList.toggle('open');
+    });
+
+    // Close drawer when clicking layout links
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        menuToggle.classList.remove('open');
+        navDrawer.classList.remove('open');
+      });
+    });
+  }
+
+  // --- 5. NEW: DOCUMENTATION HUB LIVE FILTERING ---
+  const searchInput = document.getElementById('docs-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('.docs-section').forEach(section => {
+        const title = section.querySelector('h1')?.textContent.toLowerCase() || '';
+        const subtitles = Array.from(section.querySelectorAll('h2')).map(h => h.textContent.toLowerCase()).join(' ');
+        const bodyText = section.textContent.toLowerCase();
+        
+        const isMatch = title.includes(query) || subtitles.includes(query) || bodyText.includes(query);
+        
+        if (isMatch) {
+          section.classList.remove('hidden');
+          // Highlight left sidebar navigation link
+          const linkId = `link-${section.id}`;
+          document.getElementById(linkId)?.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+          const linkId = `link-${section.id}`;
+          document.getElementById(linkId)?.classList.add('hidden');
+        }
+      });
+    });
+
+    // Handle smooth active state scroll tracking for Docs links
+    const docLinks = document.querySelectorAll('.docs-nav-link');
+    docLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        docLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  }
+
+  // --- 6. NEW: INTERACTIVE CLIPBOARD COPIER ---
+  window.copySnippet = function(button) {
+    const preBlock = button.closest('.docs-code-container').querySelector('pre code');
+    if (!preBlock) return;
+
+    const textToCopy = preBlock.textContent;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      const statusSpan = button.querySelector('span');
+      const originalText = statusSpan.textContent;
+      
+      statusSpan.textContent = "Copied!";
+      button.style.color = "var(--accent-cyan)";
+      
+      setTimeout(() => {
+        statusSpan.textContent = originalText;
+        button.style.color = "";
+      }, 1800);
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+  };
+
+  // --- 7. NEW: INTERACTIVE SETUP WIZARD COMPILER ---
+  window.goToStep = function(stepNum) {
+    // 1. Update Step Sequence Indicators
+    const indicators = document.querySelectorAll('#wizard-step-indicator .setup-step');
+    indicators.forEach((indicator, index) => {
+      const stepIdx = index + 1;
+      if (stepIdx === stepNum) {
+        indicator.className = 'setup-step active';
+      } else if (stepIdx < stepNum) {
+        indicator.className = 'setup-step completed';
+      } else {
+        indicator.className = 'setup-step';
+      }
+    });
+
+    // 2. Toggle active configuration cards
+    document.querySelectorAll('.setup-card').forEach((card, index) => {
+      if (index + 1 === stepNum) {
+        card.classList.add('active');
+      } else {
+        card.classList.remove('active');
+      }
+    });
+
+    // Run custom compiler calculations on entering Step 3
+    if (stepNum === 3) {
+      updateCompiledScripts();
+    }
+  };
+
+  // Switch Sub-Tabs in Wizard compiled output panel
+  window.switchOutputTab = function(format) {
+    document.querySelectorAll('.setup-output-block').forEach(block => {
+      block.style.display = 'none';
+    });
+    
+    const targetBlock = document.getElementById(`output-${format}`);
+    if (targetBlock) targetBlock.style.display = 'block';
+
+    // Toggle active state styling on the mini-tabs
+    const formats = ['docker', 'compose', 'env'];
+    formats.forEach(f => {
+      const btn = document.getElementById(`tab-btn-${f}`);
+      if (btn) {
+        if (f === format) {
+          btn.style.borderColor = 'var(--accent-cyan)';
+          btn.style.color = 'var(--text-primary)';
+        } else {
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }
+      }
+    });
+  };
+
+  function updateCompiledScripts() {
+    const port = document.getElementById('input-port')?.value || '1234';
+    const username = document.getElementById('input-username')?.value || 'Panos';
+    const dbpath = document.getElementById('input-dbpath')?.value || '/app/data/live-cursor.db';
+    const backupdir = document.getElementById('input-backupdir')?.value || '/app/backups';
+    
+    // Determine active radio color selection
+    let accentColor = '#06b6d4';
+    const colorRadios = document.getElementsByName('radio-color');
+    for (let radio of colorRadios) {
+      if (radio.checked) {
+        accentColor = radio.value;
+        break;
+      }
+    }
+
+    // Refresh live preview blocks in Step 2
+    const previewPort = document.getElementById('preview-port');
+    if (previewPort) previewPort.textContent = port;
+    const previewUser = document.getElementById('preview-user');
+    if (previewUser) previewUser.textContent = username;
+
+    // 1. Compile Docker CLI Command
+    const codeDocker = document.getElementById('code-docker');
+    if (codeDocker) {
+      codeDocker.textContent = `docker run -d \\
+  --name live-cursor-daemon \\
+  -p ${port}:${port} \\
+  -v ./data:/app/data \\
+  -v ./backups:/app/backups \\
+  -e PORT=${port} \\
+  -e DB_PATH=${dbpath} \\
+  -e BACKUP_DIR=${backupdir} \\
+  live-cursor/daemon:latest`;
+    }
+
+    // 2. Compile Docker Compose YAML Manifest
+    const codeCompose = document.getElementById('code-compose');
+    if (codeCompose) {
+      codeCompose.textContent = `version: '3.8'
+services:
+  live-cursor:
+    image: live-cursor/daemon:latest
+    container_name: live-cursor-daemon
+    ports:
+      - "${port}:${port}"
+    volumes:
+      - ./data:/app/data
+      - ./backups:/app/backups
+    environment:
+      - PORT=${port}
+      - DB_PATH=${dbpath}
+      - BACKUP_DIR=${backupdir}
+    restart: unless-stopped`;
+    }
+
+    // 3. Compile .env Key-Values list
+    const codeEnv = document.getElementById('code-env');
+    if (codeEnv) {
+      codeEnv.textContent = `PORT=${port}
+DB_PATH=${dbpath}
+BACKUP_DIR=${backupdir}
+ADMIN_USER=${username}
+ACCENT_COLOR=${accentColor}`;
+    }
+  }
+
+  // Bind keyup listeners to forms in Step 1 to sync preview tags instantly
+  const inputsToTrack = ['input-port', 'input-username'];
+  inputsToTrack.forEach(id => {
+    document.getElementById(id)?.addEventListener('input', updateCompiledScripts);
+  });
+
+  // --- 8. START ALL ANIMATION LOOPS ---
   runHeroAnimation();
   runAnna();
   runPanos();

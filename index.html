@@ -14,16 +14,34 @@
 
   <!-- Navigation bar -->
   <nav>
-    <div class="logo-container">
+    <div class="logo-container" style="cursor: pointer;" onclick="window.location.href='index.html'">
       <img src="icon.png" alt="Live Cursor" class="logo-img">
       <span class="logo-text">Live Cursor</span>
     </div>
     <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#architecture">Architecture</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#architecture">Architecture</a>
+      <a href="docs.html">Docs</a>
+      <a href="setup.html">Setup</a>
       <a href="https://github.com/Live-Cursor/Live-Cursor" class="btn-github" id="github-link">View on GitHub</a>
     </div>
+
+    <!-- Mobile Hamburger Toggle -->
+    <button class="menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </nav>
+
+  <!-- Responsive Mobile Navigation Drawer Overlay -->
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <a href="index.html#features" class="mobile-link">Features</a>
+    <a href="index.html#architecture" class="mobile-link">Architecture</a>
+    <a href="docs.html" class="mobile-link">Docs</a>
+    <a href="setup.html" class="mobile-link">Setup</a>
+    <a href="https://github.com/Live-Cursor/Live-Cursor" class="btn-github-mobile" id="github-link-mobile">View on GitHub</a>
+  </div>
 
   <!-- Hero Section -->
   <section class="hero">

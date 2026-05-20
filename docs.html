@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Docs | Live Cursor Collaboration Engine</title>
+  <meta name="description" content="Technical documentation and protocol details for the Live Cursor self-hosted Obsidian collaboration plugin.">
+  <link rel="stylesheet" href="style-v3.css">
+</head>
+<body class="docs-page">
+
+  <!-- Premium Subtle ambient grid glow -->
+  <div class="bg-glow-top"></div>
+
+  <!-- Navigation bar -->
+  <nav>
+    <div class="logo-container" style="cursor: pointer;" onclick="window.location.href='index.html'">
+      <img src="icon.png" alt="Live Cursor" class="logo-img">
+      <span class="logo-text">Live Cursor</span>
+    </div>
+    <div class="nav-links">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#architecture">Architecture</a>
+      <a href="docs.html" class="active" style="color: var(--text-primary);">Docs</a>
+      <a href="setup.html">Setup</a>
+      <a href="https://github.com/Live-Cursor/Live-Cursor" class="btn-github" id="github-link">View on GitHub</a>
+    </div>
+
+    <!-- Mobile Hamburger Toggle -->
+    <button class="menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Responsive Mobile Navigation Drawer Overlay -->
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <a href="index.html#features" class="mobile-link">Features</a>
+    <a href="index.html#architecture" class="mobile-link">Architecture</a>
+    <a href="docs.html" class="mobile-link active">Docs</a>
+    <a href="setup.html" class="mobile-link">Setup</a>
+    <a href="https://github.com/Live-Cursor/Live-Cursor" class="btn-github-mobile" id="github-link-mobile">View on GitHub</a>
+  </div>
+
+  <!-- Documentation Layout -->
+  <div class="docs-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="docs-sidebar">
+      <div class="docs-search-wrapper">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="docs-search" class="docs-search-input" placeholder="Search documentation...">
+      </div>
+
+      <nav class="docs-nav-group">
+        <span class="docs-nav-title">Getting Started</span>
+        <a href="#overview" class="docs-nav-link active" id="link-overview">Plugin Overview</a>
+        <a href="#installation" class="docs-nav-link" id="link-installation">Manual Installation</a>
+        <a href="#quickstart" class="docs-nav-link" id="link-quickstart">Vault Quickstart</a>
+      </nav>
+
+      <nav class="docs-nav-group">
+        <span class="docs-nav-title">Architecture</span>
+        <a href="#daemon-nodes" class="docs-nav-link" id="link-daemon-nodes">Daemon Infrastructure</a>
+        <a href="#network-protocol" class="docs-nav-link" id="link-network-protocol">Network Protocol</a>
+        <a href="#yjs-crdts" class="docs-nav-link" id="link-yjs-crdts">CRDT Merge Logic</a>
+      </nav>
+
+      <nav class="docs-nav-group">
+        <span class="docs-nav-title">Support</span>
+        <a href="#faq" class="docs-nav-link" id="link-faq">Frequently Asked Questions</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="docs-content">
+      <!-- Section 1: Overview -->
+      <section id="overview" class="docs-section">
+        <h1>Plugin Overview</h1>
+        <p>
+          <strong>Live Cursor</strong> is an advanced, offline-first, zero-cloud collaborative sync engine designed specifically for private Obsidian vaults. By leveraging Yjs conflict-free replicated data types (CRDTs) and local background daemons, it lets you edit vaults simultaneously with team members without exporting your data to third-party databases.
+        </p>
+
+        <div class="docs-alert">
+          <h4>
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Why Zero-Cloud?
+          </h4>
+          <p>
+            Standard real-time collaborative editors require a cloud registry to sequence and resolve keystrokes. Live Cursor routes sync traffic directly between your connected clients and your own local background SQLite database daemon, maintaining absolute privacy for your intellectual property.
+          </p>
+        </div>
+
+        <h2>Key Capabilities</h2>
+        <ul>
+          <li><strong>Keystroke-level Merging</strong>: Never deal with Git line conflicts or overwriting other authors again.</li>
+          <li><strong>Metadata & Settings Sync</strong>: Dynamically propagates workspace configurations, pane positions, and custom styles across connected devices.</li>
+          <li><strong>Offline Resilience</strong>: Work fully offline; changes buffer locally in sqlite and cleanly merge upon reconnecting to the team node.</li>
+        </ul>
+      </section>
+
+      <!-- Section 2: Installation -->
+      <section id="installation" class="docs-section">
+        <h1>Manual Installation</h1>
+        <p>
+          While Live Cursor is available via the Obsidian Community Plugins marketplace, you can also install it manually by following these lightweight packaging steps.
+        </p>
+
+        <h2>1. Grab Compiled Releases</h2>
+        <p>
+          Download the latest compiled release bundle from GitHub. The plugin directory requires three fundamental assets:
+        </p>
+        <ul>
+          <li><code>main.js</code> - The compiled execution logic.</li>
+          <li><code>manifest.json</code> - Metadata containing configuration permissions.</li>
+          <li><code>styles.css</code> - Custom rendering styling for peer cursors and flags.</li>
+        </ul>
+
+        <h2>2. Place Assets in Vault</h2>
+        <p>
+          Move these assets to your target vault's hidden plugin directory:
+        </p>
+
+        <div class="docs-code-container">
+          <div class="docs-code-header">
+            <span class="docs-code-lang">bash</span>
+            <button class="docs-code-copy-btn" onclick="copySnippet(this)">
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre><code># Create the target directory inside Obsidian vault plugins
+mkdir -p .obsidian/plugins/live-cursor
+
+# Copy your downloaded release files into the directory
+cp main.js manifest.json styles.css .obsidian/plugins/live-cursor/</code></pre>
+        </div>
+
+        <h2>3. Reload Plugins</h2>
+        <p>
+          Navigate to <strong>Obsidian Settings > Community Plugins</strong>, click <strong>Check for updates</strong>, and toggle <strong>Live Cursor</strong> to enabled.
+        </p>
+      </section>
+
+      <!-- Section 3: Vault Quickstart -->
+      <section id="quickstart" class="docs-section">
+        <h1>Vault Quickstart</h1>
+        <p>
+          To synchronize vaults, a background sync database must be running. We provide an embedded sync server inside the plugin settings or a detached docker container for remote execution.
+        </p>
+
+        <h2>Bootstrap local server in 15 seconds</h2>
+        <ol>
+          <li>Open <strong>Obsidian Settings > Live Cursor</strong>.</li>
+          <li>Click the <strong>Launch Setup Wizard</strong> button inside the control panel.</li>
+          <li>Under <strong>Step 1: background server</strong>, click the switch to boot the secure local daemon process.</li>
+          <li>Under <strong>Step 2: Profile setup</strong>, type your display name and pick your cursor color banner.</li>
+          <li>You are now ready to collaborate! Share your local network address (e.g., <code>ws://192.168.1.100:1234/sync</code>) with teammates.</li>
+        </ol>
+
+        <div class="docs-alert tip">
+          <h4>
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            Wizard Generator
+          </h4>
+          <p>
+            For advanced custom configurations, use our interactive <a href="setup.html" style="color: var(--accent-cyan); text-decoration: underline;">Guided Setup Wizard</a> to instantly compile Docker Compose or environment manifests.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 4: Daemon Infrastructure -->
+      <section id="daemon-nodes" class="docs-section">
+        <h1>Daemon Infrastructure</h1>
+        <p>
+          The Live Cursor daemon process is structured in TypeScript, utilizing a low-overhead SQLite storage mechanism and a WebSocket listener to relay operations.
+        </p>
+
+        <h2>Docker Container Deployment</h2>
+        <p>
+          If you prefer a headless server running on a NAS, server, or cloud node, deploy the precompiled Alpine docker container.
+        </p>
+
+        <div class="docs-code-container">
+          <div class="docs-code-header">
+            <span class="docs-code-lang">docker</span>
+            <button class="docs-code-copy-btn" onclick="copySnippet(this)">
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre><code># Deploy the Docker container on port 1234
+docker run -d \
+  --name live-cursor-daemon \
+  -p 1234:1234 \
+  -v /volume1/obsidian/data:/app/data \
+  -v /volume1/obsidian/backups:/app/backups \
+  -e PORT=1234 \
+  -e DB_PATH=/app/data/live-cursor.db \
+  live-cursor/daemon:latest</code></pre>
+        </div>
+
+        <h2>Environment Parameters</h2>
+        <p>
+          The daemon respects standard environmental variables for easy tailoring:
+        </p>
+        <ul>
+          <li><code>PORT</code>: The port the daemon WebSocket listens on (Defaults to <code>1234</code>).</li>
+          <li><code>DB_PATH</code>: Absolute SQLite file route where document states are indexed.</li>
+          <li><code>BACKUP_DIR</code>: Directory where flat Markdown documents are flushed during idle sync periods for safety.</li>
+        </ul>
+      </section>
+
+      <!-- Section 5: Network Protocol -->
+      <section id="network-protocol" class="docs-section">
+        <h1>Network Protocol</h1>
+        <p>
+          Communication between Obsidian clients and the local sync daemon occurs over binary WebSockets utilizing custom packaging structures derived from the Yjs protocols.
+        </p>
+
+        <h2>Operational Packets</h2>
+        <p>
+          Packets are framed with a single-byte prefix indicating message type. The payload consists of standard Uint8Array binary frames.
+        </p>
+
+        <div class="docs-code-container">
+          <div class="docs-code-header">
+            <span class="docs-code-lang">json</span>
+            <button class="docs-code-copy-btn" onclick="copySnippet(this)">
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2 2v1"></path></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre><code>{
+  "message_types": {
+    "0": "SyncStep1 (Client sends their local state vector)",
+    "1": "SyncStep2 (Daemon replies with missing updates)",
+    "2": "SyncUpdate (Real-time delta keystrokes and selections)",
+    "3": "AuthRequest (Daemon challenges client validation signature)"
+  }
+}</code></pre>
+        </div>
+
+        <h2>Lazy Flush Interval</h2>
+        <p>
+          To maintain standard vault format compatibility, the daemon doesn't just store edits in SQLite. Every 15 seconds of idle inactivity, it flushes the parsed, compiled Markdown buffer directly back to a human-readable <code>.md</code> file in your backups directory.
+        </p>
+      </section>
+
+      <!-- Section 6: Yjs CRDT Details -->
+      <section id="yjs-crdts" class="docs-section">
+        <h1>CRDT Merge Logic</h1>
+        <p>
+          Conflict-free Replicated Data Types (CRDTs) form the mathematical foundation of Live Cursor's concurrent editing capability.
+        </p>
+
+        <h2>Why git diffs fail real-time edit resolution</h2>
+        <p>
+          Git utilizes line-based three-way merges. If two authors edit different portions of the exact same line at the same time, Git is unable to resolve order, prompting a merge conflict.
+        </p>
+        <p>
+          <strong>Yjs</strong> manages text as a doubly linked list of character chunks. Each chunk contains:
+        </p>
+        <ul>
+          <li><strong>ID</strong>: A unique key containing the author's client code and an incremental sequence number.</li>
+          <li><strong>Origin Left / Origin Right</strong>: Pointers targeting the adjacent characters at the time the keystroke was pressed.</li>
+        </ul>
+        <p>
+          This guarantees that even if 10 people type concurrently inside the same paragraph, all keystrokes are merged in exactly the same deterministic order across every single peer.
+        </p>
+      </section>
+
+      <!-- Section 7: FAQ -->
+      <section id="faq" class="docs-section">
+        <h1>Frequently Asked Questions</h1>
+        
+        <h2>Is my vault data completely encrypted?</h2>
+        <p>
+          Yes! Direct connections between Obsidian and local sync daemons can be established using secure WebSockets (<code>wss://</code>). Data never transits through public routers, remaining locked within your own sandboxed network perimeter.
+        </p>
+
+        <h2>What happens if I edit offline?</h2>
+        <p>
+          Live Cursor queues operational transactions locally within your device memory. The moment a client regains connectivity to your sync server, the vectors are exchanged, resolving overlaps effortlessly.
+        </p>
+
+        <h2>Does this increase the size of my Markdown files?</h2>
+        <p>
+          No. The operational histories and cursor tags are recorded in a separate SQLite database file. Your Markdown vault notes remain fully standard, clean, and free of any bloating tracking markers.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-logo">
+      <img src="icon.png" alt="Live Cursor" class="logo-img">
+      <span>Live Cursor</span>
+    </div>
+    <p class="footer-desc">A beautiful, self-hosted, privacy-first real-time collaborative workspace for your Obsidian vaults.</p>
+    <a href="https://github.com/Live-Cursor/Live-Cursor" class="btn-primary">Get Core Engine</a>
+    <p class="copyright">Released under the MIT License. Built with Obsidian API and Yjs CRDT structures.</p>
+  </footer>
+
+  <!-- Search and Copy script -->
+  <script src="app.js"></script>
+</body>
+</html>
