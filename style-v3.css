@@ -35,6 +35,8 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Dot matrix background overlay */
@@ -143,10 +145,11 @@ nav {
 
 .badge-mono {
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--accent-indigo);
-  background: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-size: 12px;
+  font-weight: 600;
+  color: #818cf8; /* Lighter indigo for better contrast and anti-aliasing */
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
   padding: 4px 12px;
   border-radius: 3px;
   margin-bottom: 28px;
