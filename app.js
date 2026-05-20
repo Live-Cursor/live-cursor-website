@@ -14,85 +14,85 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // --- 2. BATTLE OF THE CURSORS HERO ANIMATION ---
+  // --- 2. DYNAMIC BATTLE OF THE CURSORS HERO ANIMATION ---
   const heroTextMain = document.getElementById('text-main');
   const heroCursor1 = document.getElementById('cursor-1');
   const heroTextFinale = document.getElementById('text-finale');
   const heroCursor2 = document.getElementById('cursor-2');
 
+  const allPlugins = [
+    "Obsidian Live Share", "Peerdraft", "screen.garden",
+    "Etherpad Lite", "Self-hosted LiveSync", "Syncthing",
+    "Obsidian Sync", "Remotely Save"
+  ];
+
   async function runHeroAnimation() {
     if (!heroTextMain || !heroCursor1 || !heroTextFinale || !heroCursor2) return;
 
     while (true) {
-      // Reset state
+      const shuffled = [...allPlugins].sort(() => 0.5 - Math.random());
+      const competitors = shuffled.slice(0, 3);
+
       heroTextMain.textContent = "";
       heroTextFinale.textContent = "";
-      heroCursor1.classList.remove("hidden");
+      heroTextMain.className = "";
+      heroCursor1.classList.remove("hidden", "is-typing");
       heroCursor2.classList.add("hidden");
-      heroCursor1.classList.remove("is-typing");
       heroCursor2.classList.remove("is-typing");
 
       await sleep(1000);
 
-      // A. Type competitor 1 name: "Obsidian Sync"
-      const competitor1 = "Obsidian Sync";
-      heroCursor1.classList.add("is-typing");
-      for (let char of competitor1) {
-        heroTextMain.textContent += char;
-        await sleep(70 + Math.random() * 50);
-      }
-      heroCursor1.classList.remove("is-typing");
-      await sleep(1500);
+      // --- PHASE 1: THE COMPETITOR BATTLE ---
+      for (let i = 0; i < competitors.length; i++) {
+        const word = competitors[i];
+        const isCursor1Turn = (i % 2 === 0);
+        const typingCursor = isCursor1Turn ? heroCursor1 : heroCursor2;
+        const deletingCursor = isCursor1Turn ? heroCursor2 : heroCursor1;
+        const highlightClass = isCursor1Turn ? "highlight-blue" : "highlight-white";
 
-      // Delete competitor 1 name
-      heroCursor1.classList.add("is-typing");
-      for (let i = 0; i < competitor1.length; i++) {
-        heroTextMain.textContent = heroTextMain.textContent.slice(0, -1);
-        await sleep(35);
-      }
-      heroCursor1.classList.remove("is-typing");
-      await sleep(600);
+        heroTextMain.parentNode.insertBefore(typingCursor, heroTextFinale);
+        heroTextMain.parentNode.insertBefore(deletingCursor, heroTextFinale);
 
-      // B. Type competitor 2 name: "Google Docs"
-      const competitor2 = "Google Docs";
-      heroCursor1.classList.add("is-typing");
-      for (let char of competitor2) {
-        heroTextMain.textContent += char;
-        await sleep(70 + Math.random() * 50);
-      }
-      heroCursor1.classList.remove("is-typing");
-      await sleep(1500);
+        typingCursor.classList.remove("hidden");
+        deletingCursor.classList.add("hidden");
 
-      // Delete competitor 2 name
-      heroCursor1.classList.add("is-typing");
-      for (let i = 0; i < competitor2.length; i++) {
-        heroTextMain.textContent = heroTextMain.textContent.slice(0, -1);
-        await sleep(35);
-      }
-      heroCursor1.classList.remove("is-typing");
-      await sleep(600);
+        // Type competitor
+        typingCursor.classList.add("is-typing");
+        for (let char of word) {
+          heroTextMain.textContent += char;
+          await sleep(70 + Math.random() * 50);
+        }
+        typingCursor.classList.remove("is-typing");
 
-      // C. Type prefix "Collaborative "
-      const prefix = "Collaborative ";
-      heroCursor1.classList.add("is-typing");
-      for (let char of prefix) {
-        heroTextMain.textContent += char;
-        await sleep(70 + Math.random() * 50);
-      }
-      heroCursor1.classList.remove("is-typing");
-      await sleep(1000);
+        await sleep(600);
 
-      // D. Simultaneous typing phase!
+        // Highlight and delete
+        typingCursor.classList.add("hidden");
+        deletingCursor.classList.remove("hidden");
+        heroTextMain.classList.add(highlightClass);
+
+        await sleep(400);
+
+        heroTextMain.textContent = "";
+        heroTextMain.classList.remove(highlightClass);
+
+        await sleep(300);
+      }
+
+      // --- PHASE 2: THE COLLABORATIVE FINALE ---
+      heroTextMain.parentNode.appendChild(heroCursor2); 
+      
+      heroCursor1.classList.remove("hidden");
       heroCursor2.classList.remove("hidden");
 
-      const wordLeft = "Real-Time Sync";
-      const wordRight = " Directly Inside Obsidian";
+      const wordLeft = "Live-";
+      const wordRight = "Cursor";
 
       async function typeLeft() {
         heroCursor1.classList.add("is-typing");
         for (let char of wordLeft) {
           heroTextMain.textContent += char;
-          await sleep(80 + Math.random() * 60);
+          await sleep(100 + Math.random() * 100);
         }
         heroCursor1.classList.remove("is-typing");
       }
@@ -101,15 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
         heroCursor2.classList.add("is-typing");
         for (let char of wordRight) {
           heroTextFinale.textContent += char;
-          await sleep(95 + Math.random() * 70);
+          await sleep(100 + Math.random() * 100);
         }
         heroCursor2.classList.remove("is-typing");
       }
 
-      // Run both simultaneously
+      await sleep(200);
       await Promise.all([typeLeft(), typeRight()]);
 
-      await sleep(6000); // Admire the final output
+      await sleep(800);
+      heroCursor1.classList.add("hidden");
+      heroCursor2.classList.add("hidden");
+
+      await sleep(6000); // Wait before restarting the loop
     }
   }
 
@@ -156,11 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function runAnna() {
     if (!tAnna || !cAnna || !caretAnna) return;
-
     while (true) {
       tAnna.textContent = "";
       updatePos(cAnna, 'prefix-anna', 'text-anna');
-      
       await sleep(1500);
       cAnna.style.opacity = '1';
       addLog("PEER: Anna joined active collaborative session", "anna");
@@ -212,12 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function runPanos() {
     if (!tPanos || !cPanos || !caretPanos) return;
-
     while (true) {
       tPanos.textContent = "single click";
       tPanos.className = "";
       updatePos(cPanos, 'prefix-panos', 'text-panos');
-      
       await sleep(3000);
       cPanos.style.opacity = '1';
       addLog("PEER: Panos joined active collaborative session", "panos");
