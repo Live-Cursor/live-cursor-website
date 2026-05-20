@@ -383,7 +383,7 @@ h1 {
 /* Editor Main Section */
 .mockup-editor {
   flex: 1;
-  padding: 24px 28px;
+  padding: 24px 20px;
   position: relative;
   overflow-y: auto;
   text-align: left;
@@ -393,7 +393,7 @@ h1 {
 
 .editor-content {
   font-family: var(--font-mono);
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-primary);
   white-space: pre;
   overflow-x: hidden;
