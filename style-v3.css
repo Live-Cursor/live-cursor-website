@@ -143,19 +143,7 @@ nav {
   margin: 0 auto;
 }
 
-.badge-mono {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  color: #818cf8; /* Lighter indigo for better contrast and anti-aliasing */
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  padding: 4px 12px;
-  border-radius: 3px;
-  margin-bottom: 28px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
+
 
 h1 {
   font-family: var(--font-sans);
