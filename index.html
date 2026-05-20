@@ -301,9 +301,11 @@
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     const cAnna = document.getElementById('cursor-anna');
+    const caretAnna = cAnna.querySelector('.cursor-caret');
     const tAnna = document.getElementById('text-anna');
     
     const cPanos = document.getElementById('cursor-panos');
+    const caretPanos = cPanos.querySelector('.cursor-caret');
     const tPanos = document.getElementById('text-panos');
     
     const logsContainer = document.getElementById('logs-container');
@@ -349,33 +351,39 @@
         
         addLog("PEER: Anna started typing at line 14...", "anna");
         const text1 = "Conflict-free merges";
+        caretAnna.classList.add("is-typing");
         for (let char of text1) {
           tAnna.textContent += char;
           updatePos(cAnna, 'prefix-anna', 'text-anna');
           await sleep(60 + (Math.random() * 40));
         }
+        caretAnna.classList.remove("is-typing");
         addLog("SYNC: Recv delta update (+20 chars) from Anna", "sync");
         
         await sleep(1200);
         
         addLog("PEER: Anna backspacing last word...", "anna");
         // Deletes last word
+        caretAnna.classList.add("is-typing");
         for (let i = 0; i < 6; i++) {
           tAnna.textContent = tAnna.textContent.slice(0, -1);
           updatePos(cAnna, 'prefix-anna', 'text-anna');
           await sleep(40);
         }
+        caretAnna.classList.remove("is-typing");
         addLog("SYNC: Recv delta update (-6 chars) from Anna", "sync");
         
         await sleep(400);
         
         addLog("PEER: Anna typing correction...", "anna");
         const text2 = "offline architecture";
+        caretAnna.classList.add("is-typing");
         for (let char of text2) {
           tAnna.textContent += char;
           updatePos(cAnna, 'prefix-anna', 'text-anna');
           await sleep(60 + (Math.random() * 40));
         }
+        caretAnna.classList.remove("is-typing");
         addLog("SYNC: Recv delta update (+20 chars) from Anna", "sync");
         addLog("SYNC: State converged (0 conflicts)", "sync");
         
@@ -414,11 +422,13 @@
         addLog("PEER: Panos replacing selected text...", "panos");
         // Types new phrase
         const newText = "simple toggle";
+        caretPanos.classList.add("is-typing");
         for (let char of newText) {
           tPanos.textContent += char;
           updatePos(cPanos, 'prefix-panos', 'text-panos');
           await sleep(70 + (Math.random() * 50));
         }
+        caretPanos.classList.remove("is-typing");
         addLog("SYNC: Recv delta update (+13 chars) from Panos", "sync");
         addLog("SYNC: State converged (0 conflicts)", "sync");
         

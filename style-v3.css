@@ -424,9 +424,16 @@ h1 {
 }
 
 .cursor-caret {
-  width: 2px;
+  width: 1.5px; /* Sleeker, sharper line for realism */
   height: 18px;
-  animation: blink-caret 0.8s infinite alternate;
+  border-radius: 1px;
+  animation: blink-caret 1s step-end infinite;
+}
+
+.cursor-caret.is-typing,
+.is-typing {
+  animation: none !important;
+  opacity: 1 !important;
 }
 
 .cursor-tag {
@@ -890,8 +897,8 @@ footer {
 }
 
 @keyframes blink-caret {
-  from, to { opacity: 0; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Responsive Overrides */
