@@ -401,39 +401,25 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function updateCompiledScripts() {
-    const port = document.getElementById('input-port')?.value || '1234';
-    const username = document.getElementById('input-username')?.value || 'Panos';
-    const dbpath = document.getElementById('input-dbpath')?.value || '/app/data/live-cursor.db';
-    const backupdir = document.getElementById('input-backupdir')?.value || '/app/backups';
-    
-    // Determine active radio color selection
-    let accentColor = '#06b6d4';
-    const colorRadios = document.getElementsByName('radio-color');
-    for (let radio of colorRadios) {
-      if (radio.checked) {
-        accentColor = radio.value;
-        break;
-      }
-    }
+    const port = document.getElementById('input-port')?.value || '4444';
+    const token = document.getElementById('input-token')?.value || 'your-strong-password';
+    const dbdir = document.getElementById('input-dbdir')?.value || '/app/data';
 
-    // Refresh live preview blocks in Step 2
+    // Refresh live preview block in Step 2
     const previewPort = document.getElementById('preview-port');
     if (previewPort) previewPort.textContent = port;
-    const previewUser = document.getElementById('preview-user');
-    if (previewUser) previewUser.textContent = username;
 
     // 1. Compile Docker CLI Command
     const codeDocker = document.getElementById('code-docker');
     if (codeDocker) {
       codeDocker.textContent = `docker run -d \\
-  --name live-cursor-daemon \\
+  --name live-cursor-server \\
   -p ${port}:${port} \\
-  -v ./data:/app/data \\
-  -v ./backups:/app/backups \\
+  -v live-cursor-data:${dbdir} \\
   -e PORT=${port} \\
-  -e DB_PATH=${dbpath} \\
-  -e BACKUP_DIR=${backupdir} \\
-  live-cursor/daemon:latest`;
+  -e DB_DIR=${dbdir} \\
+  -e AUTH_TOKEN=${token} \\
+  ghcr.io/live-cursor/sync-server:latest`;
     }
 
     // 2. Compile Docker Compose YAML Manifest
@@ -442,34 +428,33 @@ document.addEventListener('DOMContentLoaded', () => {
       codeCompose.textContent = `version: '3.8'
 services:
   live-cursor:
-    image: live-cursor/daemon:latest
-    container_name: live-cursor-daemon
+    image: ghcr.io/live-cursor/sync-server:latest
+    container_name: live-cursor-server
     ports:
       - "${port}:${port}"
     volumes:
-      - ./data:/app/data
-      - ./backups:/app/backups
+      - live-cursor-data:${dbdir}
     environment:
       - PORT=${port}
-      - DB_PATH=${dbpath}
-      - BACKUP_DIR=${backupdir}
-    restart: unless-stopped`;
+      - DB_DIR=${dbdir}
+      - AUTH_TOKEN=${token}
+    restart: unless-stopped
+
+volumes:
+  live-cursor-data:`;
     }
 
     // 3. Compile .env Key-Values list
     const codeEnv = document.getElementById('code-env');
     if (codeEnv) {
       codeEnv.textContent = `PORT=${port}
-DB_PATH=${dbpath}
-BACKUP_DIR=${backupdir}
-ADMIN_USER=${username}
-ACCENT_COLOR=${accentColor}`;
+DB_DIR=${dbdir}
+AUTH_TOKEN=${token}`;
     }
   }
 
-  // Bind keyup listeners to forms in Step 1 to sync preview tags instantly
-  const inputsToTrack = ['input-port', 'input-username'];
-  inputsToTrack.forEach(id => {
+  // Bind input listeners to Step 1 forms to sync preview tags instantly
+  ['input-port', 'input-token', 'input-dbdir'].forEach(id => {
     document.getElementById(id)?.addEventListener('input', updateCompiledScripts);
   });
 

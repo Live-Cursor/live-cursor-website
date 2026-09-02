@@ -107,7 +107,7 @@
       
       <div class="hero-docker-command">
         <span style="color: var(--text-muted);">$</span>
-        <span style="color: var(--text-primary);">docker run -d -p 1234:1234 live-cursor/daemon</span>
+        <span style="color: var(--text-primary);">docker run -d -p 4444:4444 -e AUTH_TOKEN=your-password ghcr.io/live-cursor/sync-server</span>
       </div>
     </div>
 
@@ -197,8 +197,8 @@
         <div class="mockup-logs">
           <span class="sidebar-title">Sync Telemetry</span>
           <div class="logs-content" id="logs-container">
-            <div class="log-line"><span>[00:00:01]</span> INIT: SQLite sync daemon bind ok</div>
-            <div class="log-line"><span>[00:00:01]</span> INFO: listening on port 1234</div>
+            <div class="log-line"><span>[00:00:01]</span> INIT: Node sync daemon bind ok</div>
+            <div class="log-line"><span>[00:00:01]</span> INFO: listening on port 4444</div>
             <div class="log-line"><span>[00:00:02]</span> PEER: node connected from local loopback</div>
             <div class="log-line sync"><span>[00:00:02]</span> SYNC: Initial sync complete (0 conflicts)</div>
           </div>
@@ -273,8 +273,8 @@
     <div class="features-grid">
       <div class="feature-card">
         <span class="card-num">01</span>
-        <h3>SQLite Synchronization</h3>
-        <p>Your notes stay fully local. The daemon operates on your local SQLite vault indexes, broadcasting incremental updates seamlessly to connected peers.</p>
+        <h3>CRDT-First Storage</h3>
+        <p>Every note is a Yjs room state persisted to your own disk as a binary document. The daemon broadcasts incremental updates to connected peers without ever touching a third-party database.</p>
       </div>
 
       <div class="feature-card">
@@ -315,22 +315,22 @@
         <!-- Node 1 -->
         <div class="flow-node">
           <h4>Obsidian Client A</h4>
-          <p>Captures markdown buffers and streams delta operations instantly via secure WebSocket loops.</p>
-          <span class="node-meta">ws://127.0.0.1:1234</span>
+          <p>Captures markdown buffers and streams delta operations instantly via authenticated WebSocket loops.</p>
+          <span class="node-meta">ws://127.0.0.1:4444</span>
         </div>
 
         <!-- Node 2 -->
         <div class="flow-node">
           <h4>Local Node Daemon</h4>
-          <p>Coordinates incoming operational deltas, runs resolving calculations, and updates the local database.</p>
-          <span class="node-meta">SQLite Engine (Active)</span>
+          <p>Coordinates incoming operational deltas, runs resolving calculations, and persists Yjs room state to disk.</p>
+          <span class="node-meta">Yjs Room State (File-Backed)</span>
         </div>
 
         <!-- Node 3 -->
         <div class="flow-node">
           <h4>Obsidian Client B</h4>
           <p>Receives merged diff packets and integrates changes directly into the active editing document pane.</p>
-          <span class="node-meta">ws://127.0.0.1:1234</span>
+          <span class="node-meta">ws://127.0.0.1:4444</span>
         </div>
       </div>
     </div>

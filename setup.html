@@ -130,22 +130,18 @@
         <div class="form-row">
           <div class="form-group">
             <label for="input-port">Daemon WebSocket Port</label>
-            <input type="number" id="input-port" class="form-input" value="1234" min="80" max="65535">
+            <input type="number" id="input-port" class="form-input" value="4444" min="80" max="65535">
           </div>
           <div class="form-group">
-            <label for="input-username">Admin User Profile</label>
-            <input type="text" id="input-username" class="form-input" value="Panos" placeholder="Type name...">
+            <label for="input-token">Server Password (AUTH_TOKEN)</label>
+            <input type="password" id="input-token" class="form-input" value="your-strong-password" placeholder="Type password...">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="input-dbpath">Internal SQLite Path</label>
-            <input type="text" id="input-dbpath" class="form-input" value="/app/data/live-cursor.db">
-          </div>
-          <div class="form-group">
-            <label for="input-backupdir">Backup Markdown Dir</label>
-            <input type="text" id="input-backupdir" class="form-input" value="/app/backups">
+            <label for="input-dbdir">Data Directory (DB_DIR)</label>
+            <input type="text" id="input-dbdir" class="form-input" value="/app/data">
           </div>
         </div>
       </div>
@@ -197,13 +193,13 @@
         </div>
 
         <div class="form-group" style="margin-top: 10px;">
-          <label>Vault Peer Address URL</label>
+          <label>Vault Server Connection URL</label>
           <div
             style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 12px 16px; border-radius: 6px; font-family: var(--font-mono); font-size: 13px; color: var(--accent-cyan); word-break: break-all;">
             <span style="color: var(--text-muted);">ws://localhost:<span
-                id="preview-port">1234</span>/sync?user=</span><span id="preview-user"
-              style="color: var(--text-primary); font-weight: bold;">Panos</span>
+                id="preview-port">4444</span></span>
           </div>
+          <p style="color: var(--text-muted); font-size: 12px; margin-top: 8px;">Enter this URL in <strong>Settings &gt; Live Cursor &gt; Server Connection URL</strong> on every device, along with the same Room Name and Server Password. The plugin builds per-file room paths automatically.</p>
         </div>
       </div>
 
@@ -217,7 +213,7 @@
     <div class="setup-card" id="card-step-3">
       <h2>Compiled Deployment Templates</h2>
       <p>Your custom configuration is compile-ready. Copy the scripts below into your local shell or Docker daemon to
-        launch the database.</p>
+        launch the sync server.</p>
 
       <!-- Sub-Tab navigation for output formats -->
       <div
@@ -246,14 +242,13 @@
             </button>
           </div>
           <pre><code id="code-docker">docker run -d \
-  --name live-cursor-daemon \
-  -p 1234:1234 \
-  -v ./data:/app/data \
-  -v ./backups:/app/backups \
-  -e PORT=1234 \
-  -e DB_PATH=/app/data/live-cursor.db \
-  -e BACKUP_DIR=/app/backups \
-  live-cursor/daemon:latest</code></pre>
+  --name live-cursor-server \
+  -p 4444:4444 \
+  -v live-cursor-data:/app/data \
+  -e PORT=4444 \
+  -e DB_DIR=/app/data \
+  -e AUTH_TOKEN=your-strong-password \
+  ghcr.io/live-cursor/sync-server:latest</code></pre>
         </div>
       </div>
 
@@ -274,18 +269,20 @@
           <pre><code id="code-compose">version: '3.8'
 services:
   live-cursor:
-    image: live-cursor/daemon:latest
-    container_name: live-cursor-daemon
+    image: ghcr.io/live-cursor/sync-server:latest
+    container_name: live-cursor-server
     ports:
-      - "1234:1234"
+      - "4444:4444"
     volumes:
-      - ./data:/app/data
-      - ./backups:/app/backups
+      - live-cursor-data:/app/data
     environment:
-      - PORT=1234
-      - DB_PATH=/app/data/live-cursor.db
-      - BACKUP_DIR=/app/backups
-    restart: unless-stopped</code></pre>
+      - PORT=4444
+      - DB_DIR=/app/data
+      - AUTH_TOKEN=your-strong-password
+    restart: unless-stopped
+
+volumes:
+  live-cursor-data:</code></pre>
         </div>
       </div>
 
@@ -303,18 +300,16 @@ services:
               <span>Copy</span>
             </button>
           </div>
-          <pre><code id="code-env">PORT=1234
-DB_PATH=/app/data/live-cursor.db
-BACKUP_DIR=/app/backups
-ADMIN_USER=Panos
-ACCENT_COLOR=#06b6d4</code></pre>
+          <pre><code id="code-env">PORT=4444
+DB_DIR=/app/data
+AUTH_TOKEN=your-strong-password</code></pre>
         </div>
       </div>
 
       <div class="setup-actions">
         <button class="btn-wizard-prev" onclick="goToStep(2)">&larr; Adjust Settings</button>
         <button class="btn-wizard-next" onclick="window.location.href='index.html'"
-          style="background: rgba(99, 102, 241, 0.1); color: var(--text-primary); border: 1px solid rgba(99, 102, 241, 0.4);">🎉
+          style="background: rgba(99, 102, 241, 0.1); color: var(--text-primary); border: 1px solid rgba(99, 102, 241, 0.4);">
           Return to Home</button>
       </div>
     </div>
